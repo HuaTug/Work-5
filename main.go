@@ -4,6 +4,8 @@ package main
 
 import (
 	chats "Hertz_refactored/biz/dal/db/chats/im"
+	"Hertz_refactored/biz/dal/db/chats/im/mq"
+	"Hertz_refactored/biz/dal/db/chats/im/mq/script"
 	"Hertz_refactored/biz/dal/mongodb"
 	"Hertz_refactored/biz/dal/mysql"
 	"Hertz_refactored/biz/dal/redis"
@@ -16,6 +18,8 @@ func main() {
 	mongodb.Init()
 	redis.Init()
 	mv.InitJwt()
+	mq.InitRabbitMQ()
+	script.LoadingScript()
 	h := server.Default(
 		server.WithStreamBody(true),
 		server.WithMaxRequestBodySize(16*1024*1024))

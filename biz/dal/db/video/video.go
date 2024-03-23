@@ -2,11 +2,8 @@ package video
 
 import (
 	"Hertz_refactored/biz/dal/mysql"
-	"Hertz_refactored/biz/dal/redis"
 	"Hertz_refactored/biz/model/video"
-	"encoding/json"
 	"github.com/sirupsen/logrus"
-	"strconv"
 )
 
 func FeedList(req video.FeedServiceRequest) ([]*video.Video, error) {
@@ -56,26 +53,4 @@ func VideoSearch(req video.VideoSearchRequest) ([]*video.Video, int64, error) {
 	}
 
 	return video2, count, nil
-}
-
-func CacheSetAuthor(videoid, authorid int64) {
-	key := strconv.FormatInt(videoid, 10)
-	err := redis.CacheHSet("video", key, authorid)
-	if err != nil {
-		logrus.Errorf("set cache error:%+v", err)
-	}
-}
-
-func CacheGetAuthor(videoid int64) (int64, error) {
-	key := strconv.FormatInt(videoid, 10)
-	data, err := redis.CacheHGet("video", key)
-	if err != nil {
-		return 0, err
-	}
-	uid := int64(0)
-	err = json.Unmarshal(data, &uid)
-	if err != nil {
-		return 0, err
-	}
-	return uid, nil
 }

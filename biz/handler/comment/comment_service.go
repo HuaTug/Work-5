@@ -4,11 +4,15 @@ package comment
 
 import (
 	comment2 "Hertz_refactored/biz/dal/db/comment"
+	"Hertz_refactored/biz/dal/redis"
 	"Hertz_refactored/biz/model/comment"
 	"Hertz_refactored/biz/pkg/errno"
 	"context"
+	"encoding/json"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"github.com/sirupsen/logrus"
+	"strconv"
 	"time"
 )
 
@@ -32,7 +36,8 @@ func CreateComment(ctx context.Context, c *app.RequestContext) {
 			Time:    time.Now().Format(time.DateTime),
 		}
 		if err := comment2.CreateComment(comments); err != nil {
-			panic(err)
+			logrus.Info(err)
+			return
 		}
 		resp.Code = consts.StatusOK
 		resp.Msg = "创建评论成功"
@@ -57,22 +62,20 @@ func ListComment(ctx context.Context, c *app.RequestContext) {
 	}
 	var comments []*comment.Comment
 	var total int64
-	userId, _ := c.Get("user_id")
-	if uid, ok := userId.(float64); ok {
-		comments, total, err = comment2.ListComment(req, int64(uid))
-		if err != nil {
-			panic(err)
-		}
-		c.JSON(consts.StatusOK, &comment.ListCommentResponse{
-			Code:     errno.SuccessCode,
-			Msg:      "展示评论信息",
-			Comments: comments,
-			Total:    total,
-		})
+	comments, _ = CacheGetListComment(req.VideoId)
+	comments, total, err = comment2.ListComment(req)
+	if err != nil {
+		logrus.Info(err)
+		c.JSON(consts.StatusBadRequest, "展示评论列表失败")
 		return
 	}
-	c.JSON(consts.StatusBadRequest, "展示评论列表失败")
-	return
+	CacheSetAllComment(req.VideoId, comments)
+	c.JSON(consts.StatusOK, &comment.ListCommentResponse{
+		Code:     errno.SuccessCode,
+		Msg:      "展示评论信息",
+		Comments: comments,
+		Total:    total,
+	})
 }
 
 // DeleteComment .
@@ -92,4 +95,23 @@ func DeleteComment(ctx context.Context, c *app.RequestContext) {
 	resp.Code = consts.StatusOK
 	resp.Msg = "成功删除一条记录"
 	c.JSON(consts.StatusOK, resp)
+}
+
+// Redis缓存
+func CacheSetAllComment(videoId int64, c []*comment.Comment) {
+	vid := strconv.FormatInt(videoId, 10)
+	err := redis.CacheHSet("comment:"+vid, vid, c)
+	if err != nil {
+		logrus.Info("Set Cache error: ", err)
+	}
+}
+func CacheGetListComment(videoId int64) ([]*comment.Comment, error) {
+	key := strconv.FormatInt(videoId, 10)
+	data, err := redis.CacheHGet("comment:"+key, key)
+	var comments []*comment.Comment
+	if err != nil {
+		return comments, err
+	}
+	err = json.Unmarshal(data, &comments)
+	return comments, nil
 }

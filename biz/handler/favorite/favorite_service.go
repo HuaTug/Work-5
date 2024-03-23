@@ -11,6 +11,11 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const (
+	add = int64(1)
+	sub = int64(-1)
+)
+
 // FavoriteService .
 // @router /like/action [POST]
 func FavoriteService(ctx context.Context, c *app.RequestContext) {

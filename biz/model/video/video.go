@@ -548,7 +548,7 @@ func (p *Video) String() string {
 }
 
 type FeedServiceRequest struct {
-	LastTime string `thrift:"LastTime,1" form:"last_time" form:"last_time" json:"last_time"`
+	LastTime string `thrift:"LastTime,1" form:"last_time" json:"last_time"`
 }
 
 func NewFeedServiceRequest() *FeedServiceRequest {
@@ -925,7 +925,7 @@ func (p *FeedServiceResponse) String() string {
 
 type VideoFeedListRequest struct {
 	AuthorId int64 `thrift:"AuthorId,1" form:"author_id" json:"author_id"`
-	PageNum  int64 `thrift:"PageNum,2" form:"page_num" form:"page_num" json:"page_num"`
+	PageNum  int64 `thrift:"PageNum,2" form:"page_num" json:"page_num"`
 	PageSize int64 `thrift:"PageSize,3" form:"page_size" json:"page_size"`
 }
 
@@ -1434,9 +1434,9 @@ func (p *VideoFeedListResponse) String() string {
 type VideoSearchRequest struct {
 	Keyword  string `thrift:"Keyword,1" form:"keyword" json:"keyword" query:"keyword"`
 	PageNum  int64  `thrift:"PageNum,2" form:"page_num" form:"page_num" json:"page_num"`
-	PageSize int64  `thrift:"PageSize,3" form:"page_size" form:"page_size" json:"page_size"`
-	FormDate string `thrift:"FormDate,4" form:"form_date" form:"form_date" json:"form_date"`
-	ToDate   string `thrift:"ToDate,5" form:"to_date" json:"to_date"`
+	PageSize int64  `thrift:"PageSize,3" form:"page_size" json:"page_size"`
+	FormDate string `thrift:"FormDate,4" form:"form_date" json:"form_date"`
+	ToDate   string `thrift:"ToDate,5" form:"to_date" form:"to_date" json:"to_date"`
 }
 
 func NewVideoSearchRequest() *VideoSearchRequest {
@@ -2029,7 +2029,7 @@ func (p *VideoSearchResponse) String() string {
 
 type VideoPopularRequest struct {
 	PageNum  int64 `thrift:"PageNum,1" form:"page_num" json:"page_num" vd:"$>0"`
-	PageSize int64 `thrift:"PageSize,2" form:"page_size" json:"page_size" vd:"(len($) > 0 && len($) < 1000)"`
+	PageSize int64 `thrift:"PageSize,2" form:"page_size" form:"page_size" json:"page_size" vd:"(len($) > 0 && len($) < 1000)"`
 }
 
 func NewVideoPopularRequest() *VideoPopularRequest {

@@ -74,3 +74,15 @@ func _loginuserMw() []app.HandlerFunc {
 		mv.JwtMiddleware.LoginHandler,
 	}
 }
+
+func _v1userMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _getuserinfoMw() []app.HandlerFunc {
+	// your code...
+	return []app.HandlerFunc{
+		mv.JwtMiddleware.MiddlewareFunc(),
+	}
+}

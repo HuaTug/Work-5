@@ -4,12 +4,14 @@ package user
 
 import (
 	user2 "Hertz_refactored/biz/dal/db/user"
+	"Hertz_refactored/biz/dal/mysql"
 	user "Hertz_refactored/biz/model/user"
 	"Hertz_refactored/biz/pack"
 	"context"
-
+	"fmt"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"github.com/sirupsen/logrus"
 )
 
 // UpdateUser .
@@ -97,14 +99,14 @@ func CreateUser(ctx context.Context, c *app.RequestContext) {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
-	User := &user.User{
+	User := user.User{
 		UserName: req.Name,
 		Password: req.Password,
 	}
-
-	if err := user2.CreateUser(User); err != nil {
+	if err := user2.CreateUser(&User); err != nil {
 		panic(err)
 	}
+	go user2.CacheSetUser(User)
 	resp := new(user.CreateUserResponse)
 	resp.Code = consts.StatusOK
 	resp.Msg = "创建用户成功"
@@ -122,3 +124,65 @@ func LoginUser(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 }
+
+// GetUserInfo .
+// @router /v1user/get [GET]
+func GetUserInfo(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req user.GetUserInfoRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+	var uid int64
+	userId, _ := c.Get("user_id")
+	if v, ok := userId.(float64); ok {
+		uid = int64(v)
+		go user2.CacheIdAndName(uid, req.UserName)
+		/*
+			这是一个Redis缓存的一个逻辑，即为用户先从redis缓存中根据关键字去查询数据，如果存在，
+			便可以直接从缓存中获取数据，如果数据不存在，那么便去从数据库中查询数据，如果数据库中查到了，
+			那么便将其加载到redis缓存中，以便后来去查询
+		*/
+		var users user.User
+		users, err = user2.CacheGetUser(req.UserName)
+		if err != nil {
+			users, err = user2.GetUser(req.UserName)
+			if err != nil {
+				logrus.Info("该用户不存在")
+				return
+			}
+			go user2.CacheSetUser(users)
+		}
+		username1 := user2.CacheGetIdAndName(uid)
+		fmt.Println(username1)
+		resp := new(user.GetUserInfoResponse)
+		resp.Code = consts.StatusOK
+		resp.User = &users
+		c.JSON(consts.StatusOK, resp)
+	} else {
+		logrus.Info("转化失败")
+		return
+	}
+}
+
+func GetUserInfo2(username string) (user.User, error) {
+	users := user.User{}
+	var err error
+	users, err = user2.CacheGetUser(username)
+	/*当err为空时，此时表示为我们可以从cache缓存中获得相应的信息，
+	此时便可以直接return返回
+	*/
+	if err == nil {
+		return users, nil
+	}
+	if err = mysql.Db.Where("user_name =?", username).Find(&users).Error; err != nil {
+		return users, err
+	}
+	//此时表示在缓存中未找到，但是在数据库中可以找到时，便可以将数据进行redis缓存
+	go user2.CacheSetUser(users)
+	return users, nil
+}
+
+// ToDo :后续为了安全起见 需要再对其进行一个优化 tips：尝试对登录操作时，就完成映射关系

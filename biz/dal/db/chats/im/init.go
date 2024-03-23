@@ -2,14 +2,14 @@ package im
 
 import (
 	"Hertz_refactored/biz/dal/db/chats/db"
+	"Hertz_refactored/biz/dal/db/chats/im/mq"
 	"Hertz_refactored/biz/model/chat"
 	e "Hertz_refactored/biz/pkg"
-	"github.com/sirupsen/logrus"
-	"time"
-
 	"encoding/json"
 	"github.com/hertz-contrib/websocket"
+	"github.com/sirupsen/logrus"
 	"log"
+	"time"
 )
 
 func (manager *ClientManager) Listen() {
@@ -42,6 +42,7 @@ func (manager *ClientManager) Listen() {
 			close(client.Send)                 //close chan
 			delete(Manager.Clients, client.ID) //delete map
 		case broadcast := <-Manager.Broadcast:
+			//ToDo:对这里进行完善
 			message := broadcast.Message
 			touid := broadcast.Client.ToUid
 			//每一个用户都有自己id和to_id，这便是能够使得两个用户进行通信的关键因素
@@ -96,12 +97,18 @@ func (manager *ClientManager) Listen() {
 					SendTime:    time.Now().Format(time.DateTime),
 					State:       0,
 				}
-				err = db.CreateMessage(messages)
+				Msg, err := json.Marshal(messages)
+				if err != nil {
+					logrus.Info("Error: ", err)
+				}
+				err = mq.SendMessageMQ(Msg)
+				if err != nil {
+					logrus.Info(err)
+				}
 				if err != nil {
 					logrus.Info(err)
 				}
 			}
-
 		}
 	}
 }

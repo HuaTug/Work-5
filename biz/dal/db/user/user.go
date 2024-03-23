@@ -2,8 +2,12 @@ package user
 
 import (
 	"Hertz_refactored/biz/dal/mysql"
+	"Hertz_refactored/biz/dal/redis"
 	"Hertz_refactored/biz/model/user"
 	"Hertz_refactored/biz/pkg/errno"
+	"encoding/json"
+	"github.com/sirupsen/logrus"
+	"strconv"
 )
 
 func CreateUser(users *user.User) error {
@@ -32,6 +36,15 @@ func QueryUser(keyword *string, page, pageSize int64) ([]*user.User, int64, erro
 		return nil, 0, err
 	}
 	return res, total, nil
+}
+
+func GetUser(username string) (user.User, error) {
+	var users user.User
+	if err := mysql.Db.Model(user.User{}).Where("user_name=?", username).Find(&users).Error; err != nil {
+		logrus.Info(err)
+		return users, err
+	}
+	return users, nil
 }
 
 func LoginUser(req user.LoginUserResquest) (err error) {
@@ -72,4 +85,46 @@ func CheckUser(account, password string) ([]*user.User, error) {
 		return nil, err
 	}
 	return res, nil
+}
+
+func CacheIdAndName(u int64, username string) {
+	uid := strconv.FormatInt(u, 10)
+	err := redis.CacheHSet("Map:"+uid, uid, username)
+	if err != nil {
+		logrus.Info(err)
+		return
+	}
+}
+
+func CacheGetIdAndName(u int64) string {
+	uid := strconv.FormatInt(u, 10)
+	v, err := redis.CacheHGet2("Map:"+uid, uid)
+	if err != nil {
+		logrus.Info(err)
+	}
+	return v
+}
+
+func CacheSetUser(u user.User) {
+	key := u.UserName
+	err := redis.CacheSet("user:"+key, u)
+	if err != nil {
+		logrus.Info("Set cache error: ", err)
+	}
+}
+
+func CacheGetUser(username string) (user.User, error) {
+	key := username
+	data, err := redis.CacheGet("user:" + key)
+	user := user.User{}
+	if err != nil {
+		logrus.Info(err)
+		return user, err
+	}
+	_ = json.Unmarshal(data, &user)
+	if err != nil {
+		logrus.Info(err)
+		return user, err
+	}
+	return user, nil
 }

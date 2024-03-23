@@ -69,10 +69,18 @@ struct LoginUserResponse{
     3:string token
 }
 
+struct GetUserInfoRequest{
+    1:string UserName (api.body="user_name",api.json="user_name",api.form="user_name")
+}
+struct GetUserInfoResponse{
+    1:Code code
+    2:User user
+}
 service UserService {
    UpdateUserResponse UpdateUser(1:UpdateUserRequest req)(api.post="/v1/user/update")
    DeleteUserResponse DeleteUser(1:DeleteUserRequest req)(api.delete="/v1/user/delete")
    QueryUserResponse  QueryUser(1: QueryUserRequest req)(api.post="/v1/user/query/")
    CreateUserResponse CreateUser(1:CreateUserRequest req)(api.post="/v1/user/create/")
    LoginUserResponse  LoginUser(1:LoginUserResquest req)(api.post="/v1/user/login")
+   GetUserInfoResponse GetUserInfo(1:GetUserInfoRequest req)(api.get="/v1/user/get")
 }

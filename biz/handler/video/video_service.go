@@ -4,8 +4,11 @@ package video
 
 import (
 	video2 "Hertz_refactored/biz/dal/db/video"
+	"Hertz_refactored/biz/dal/redis"
 	"context"
+	"encoding/json"
 	"github.com/sirupsen/logrus"
+	"strconv"
 
 	video "Hertz_refactored/biz/model/video"
 	"github.com/cloudwego/hertz/pkg/app"
@@ -25,6 +28,9 @@ func FeedService(ctx context.Context, c *app.RequestContext) {
 	var videos []*video.Video
 	if videos, err = video2.FeedList(req); err != nil {
 		logrus.Info(err)
+	}
+	for _, v := range videos {
+		CacheSetAuthor(v.VideoId, v.AuthorId)
 	}
 	c.JSON(consts.StatusOK, video.FeedServiceResponse{
 		Code:      consts.StatusOK,
@@ -95,4 +101,27 @@ func VideoPopular(ctx context.Context, c *app.RequestContext) {
 	resp := new(video.VideoPopularResponse)
 
 	c.JSON(consts.StatusOK, resp)
+}
+
+func CacheSetAuthor(videoid, authorid int64) {
+	key := strconv.FormatInt(videoid, 10)
+	err := redis.CacheHSet("video:"+key, key, authorid)
+	if err != nil {
+		logrus.Info("Set cache error: ", err)
+	}
+}
+
+func CacheGetAuthor(videoid int64) (int64, error) {
+	key := strconv.FormatInt(videoid, 10)
+	data, err := redis.CacheHGet("video:"+key, key)
+	if err != nil {
+		return 0, nil
+	}
+	var uid int64
+	err = json.Unmarshal(data, &uid)
+	if err != nil {
+		return 0, err
+	}
+	return uid, nil
+
 }

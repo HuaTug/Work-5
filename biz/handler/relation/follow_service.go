@@ -4,7 +4,7 @@ package relation
 
 import (
 	relation2 "Hertz_refactored/biz/dal/db/relation"
-	relation "Hertz_refactored/biz/model/relation"
+	"Hertz_refactored/biz/model/relation"
 	"context"
 	"fmt"
 	"github.com/cloudwego/hertz/pkg/app"

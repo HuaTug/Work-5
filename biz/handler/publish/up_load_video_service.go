@@ -4,11 +4,14 @@ package publish
 
 import (
 	publish2 "Hertz_refactored/biz/dal/db/publish"
+	"Hertz_refactored/biz/dal/redis"
 	publish "Hertz_refactored/biz/model/publish"
 	"context"
+	"encoding/json"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/sirupsen/logrus"
+	"strconv"
 )
 
 // UploadVideo .
@@ -23,6 +26,7 @@ func UploadVideo(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 	userId, _ := c.Get("user_id")
+
 	if v, ok := userId.(float64); ok { //ToDo :先将接口类型转化为interface接口类型后，再去转化为int64类型，而非直接断言从interface接口类型转化为int64类型
 		uid := int64(v)
 		file, err := c.FormFile("file")
@@ -30,6 +34,7 @@ func UploadVideo(ctx context.Context, c *app.RequestContext) {
 			logrus.Info(err)
 			c.JSON(consts.StatusBadRequest, "获取文件出错")
 		}
+
 		if err := publish2.UploadFile(file, req, uid); err != nil {
 			logrus.Info("上传文件出错")
 			c.JSON(consts.StatusBadRequest, "文件上传出错")
@@ -40,4 +45,26 @@ func UploadVideo(ctx context.Context, c *app.RequestContext) {
 		resp.Code = consts.StatusOK
 		c.JSON(consts.StatusOK, resp)
 	}
+}
+
+func CacheSetAuthor(videoid, authorid int64) {
+	key := strconv.FormatInt(videoid, 10)
+	err := redis.CacheHSet("video:"+key, key, authorid)
+	if err != nil {
+		logrus.Info("Set cache error: ", err)
+	}
+}
+
+func CacheGetAuthor(videoid int64) (int64, error) {
+	key := strconv.FormatInt(videoid, 10)
+	data, err := redis.CacheHGet("video:"+key, key)
+	if err != nil {
+		return 0, nil
+	}
+	var uid int64
+	err = json.Unmarshal(data, &uid)
+	if err != nil {
+		return 0, err
+	}
+	return uid, nil
 }

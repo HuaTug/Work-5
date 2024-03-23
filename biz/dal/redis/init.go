@@ -20,7 +20,7 @@ var (
 	//获取锁失败重试时间间隔
 	retryDelay = 500 * time.Millisecond
 	//值过期时间
-	valueExpire  = 86400
+	valueExpire  = 3600 * 24 * 30
 	ErrMissCache = errors.New("miss Cache")
 	//锁设置
 	option = []redsync.Option{
@@ -43,7 +43,7 @@ func Init() {
 		Dial: func() (redis.Conn, error) {
 			c, err := redis.Dial(network, host,
 				redis.DialPassword(auth),
-				redis.DialDatabase(2),
+				redis.DialDatabase(1),
 			)
 			if err != nil {
 				logrus.Error("conn redis failed,", err)
@@ -53,7 +53,7 @@ func Init() {
 			return c, err
 		},
 	}
-	redisClient.Get().Do("flushdb")
+	//redisClient.Get().Do("flushdb")
 	sync := redigo.NewPool(redisClient)
 	rs = redsync.New(sync)
 	logrus.Info("redis conn success")
@@ -114,6 +114,7 @@ func CacheSet(key string, data interface{}) error {
 		valueExpire：应该是一个在函数外部定义的变量，表示过期时间（秒）
 	*/
 	if err != nil {
+		logrus.Info("第二步出错")
 		return err
 	}
 	return nil
@@ -205,7 +206,7 @@ func CacheHSet(key, mkey string, value ...interface{}) error {
 		if err != nil {
 			return nil
 		}
-
+		//对该redis缓存的解释为:key是哈希表的名字，而mkey则是哈希表的键名
 		_, err = conn.Do("HSET", key, mkey, data)
 		if err != nil {
 			return err
@@ -219,7 +220,6 @@ func CacheHGet(key, mkey string) ([]byte, error) {
 	defer conn.Close()
 
 	data, err := redis.Bytes(conn.Do("HGET", key, mkey))
-
 	//fmt.Printf("data:%v", data)
 	if err != nil {
 		return []byte{}, err
@@ -229,7 +229,17 @@ func CacheHGet(key, mkey string) ([]byte, error) {
 	}
 	return data, nil
 }
+func CacheHGet2(key, mkey string) (string, error) {
+	conn := redisClient.Get()
+	defer conn.Close()
 
+	data, err := redis.String(conn.Do("HGET", key, mkey))
+	//fmt.Printf("data:%v", data)
+	if err != nil {
+		logrus.Info(err)
+	}
+	return data, nil
+}
 func CacheDelHash(key, mkey string) error {
 
 	conn := redisClient.Get()

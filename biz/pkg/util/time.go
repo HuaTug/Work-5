@@ -14,37 +14,18 @@
  * limitations under the License.
  */
 
-package utils
+package util
 
-import (
-	"Hertz_refactored/biz/pkg/errno"
-	"errors"
-)
+import "time"
 
-type BaseResp struct {
-	StatusCode int32
-	StatusMsg  string
+// MillTimeStampToTime convert ms timestamp to time.Time
+func MillTimeStampToTime(timestamp int64) time.Time {
+	second := timestamp / 1000
+	nano := timestamp % 1000 * 1000000
+	return time.Unix(second, nano)
 }
 
-// BuildBaseResp convert error and build BaseResp
-func BuildBaseResp(err error) *BaseResp {
-	if err == nil {
-		return baseResp(errno.Success)
-	}
-
-	e := errno.ErrNo{}
-	if errors.As(err, &e) {
-		return baseResp(e)
-	}
-
-	s := errno.ServiceErr.WithMessage(err.Error())
-	return baseResp(s)
-}
-
-// baseResp build BaseResp from error
-func baseResp(err errno.ErrNo) *BaseResp {
-	return &BaseResp{
-		StatusCode: err.ErrCode,
-		StatusMsg:  err.ErrMsg,
-	}
+// SecondTimeStampToTime convert s timestamp to time.Time
+func SecondTimeStampToTime(timestamp int64) time.Time {
+	return time.Unix(timestamp, 0)
 }

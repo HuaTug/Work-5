@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package utils
+package util
 
 import (
 	"golang.org/x/crypto/bcrypt"
@@ -37,4 +37,14 @@ func VerifyPassword(password, hashedPassword string) bool {
 		return false
 	}
 	return true
+}
+
+func removeQuotes(s string) string {
+	// 检查字符串长度是否大于等于2，以确保字符串包含了至少一个引号
+	if len(s) >= 2 && s[0] == '"' && s[len(s)-1] == '"' {
+		// 使用切片操作获取字符串中除了第一个和最后一个字符之外的所有字符
+		return s[1 : len(s)-1]
+	}
+	// 如果字符串不包含引号或者引号不匹配，则原样返回
+	return s
 }

@@ -1,11 +1,19 @@
 package relation
 
 import (
+	user2 "Hertz_refactored/biz/dal/db/user"
 	"Hertz_refactored/biz/dal/mysql"
+	"fmt"
+
 	"Hertz_refactored/biz/model/relation"
 	"Hertz_refactored/biz/model/user"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/sirupsen/logrus"
+)
+
+const (
+	add = int64(1)
+	sub = int64(-1)
 )
 
 func Following(req relation.RelationServiceRequest, id int64) error {
@@ -18,11 +26,17 @@ func Following(req relation.RelationServiceRequest, id int64) error {
 			logrus.Info(err)
 			return err
 		}
+		go CacheChangeUserCount(id, add, "follower")
+		go CacheChangeUserCount(req.ToUserId, add, "follow")
 	} else {
 		if err := mysql.Db.Model(&relation.Relation{}).Where("follow_id=?", req.ToUserId).Delete(&Relation).Error; err != nil {
 			logrus.Info(err)
 			return err
 		}
+		//这个表示被关注操作
+		go CacheChangeUserCount(id, sub, "follower")
+		//这个表示为关注操作
+		go CacheChangeUserCount(req.ToUserId, sub, "follow")
 	}
 	return nil
 }
@@ -74,4 +88,26 @@ func FollowList2(req relation.RelationServicePageRequest, uid interface{}) error
 		logrus.Info(err)
 	}
 	return nil
+}
+
+// ToDo 遇到的缓存识别问题 (已解决) ->注意Map下的redis映射关系
+func CacheChangeUserCount(userid, op int64, types string) {
+	username := user2.CacheGetIdAndName(userid)
+	result := username[1 : len(username)-1]
+	fmt.Println(result)
+	users, err := user2.CacheGetUser(result)
+	//fmt.Println(users.UserID, users.UserName, users.FollowCount)
+	if err != nil {
+		logrus.Printf("user:%v miss cache", userid)
+		return
+	}
+	switch types {
+	case "follow":
+		users.FollowCount += op
+	case "follower":
+		users.FollowerCount += op
+	case "like":
+		users.FavoriteCount += op
+	}
+	user2.CacheSetUser(users)
 }

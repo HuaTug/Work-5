@@ -26,6 +26,7 @@ struct CreateCommentResponse{
 struct ListCommentRequest{
     1:i64 PageNum        (api.body="page_num",api.form="page_num")
     2:i64 PageSize       (api.body="page_size",api.form="page_size")
+    3:i64 VideoId       (api.body="video_id",api.form="video_id")
 }
 
 struct ListCommentResponse{
@@ -37,7 +38,7 @@ struct ListCommentResponse{
 
 struct CommentDeleteRequest{
     1: i64    VideoId      (api.body="video_id", api.form="video_id",api.vd="$>0")
-    2: string CommentId    (api.body="comment_id", api.form="comment_id",api.vd="(len($) > 0 && len($) < 1000)")
+    2: i64 CommentId    (api.body="comment_id", api.form="comment_id",api.vd="(len($) > 0 && len($) < 1000)")
 }
 struct CommentDeleteResponse{
     1:Code5 code
