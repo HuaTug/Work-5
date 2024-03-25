@@ -7,6 +7,7 @@ import (
 	"Hertz_refactored/biz/dal/mysql"
 	user "Hertz_refactored/biz/model/user"
 	"Hertz_refactored/biz/pack"
+	"Hertz_refactored/biz/pkg/logging"
 	"context"
 	"fmt"
 	"github.com/cloudwego/hertz/pkg/app"
@@ -33,7 +34,7 @@ func UpdateUser(ctx context.Context, c *app.RequestContext) {
 		}
 		if err := user2.UpdateUser(User, int64(uid)); err != nil {
 			c.JSON(consts.StatusBadRequest, err.Error())
-			panic(err)
+			logging.Info(err)
 		}
 
 		resp.Code = consts.StatusOK
@@ -104,7 +105,7 @@ func CreateUser(ctx context.Context, c *app.RequestContext) {
 		Password: req.Password,
 	}
 	if err := user2.CreateUser(&User); err != nil {
-		panic(err)
+		logging.Info(err)
 	}
 	go user2.CacheSetUser(User)
 	resp := new(user.CreateUserResponse)
@@ -120,6 +121,7 @@ func LoginUser(ctx context.Context, c *app.RequestContext) {
 	var req user.LoginUserResquest
 	err = c.BindAndValidate(&req)
 	if err != nil {
+		logging.Info(err)
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
@@ -133,6 +135,7 @@ func GetUserInfo(ctx context.Context, c *app.RequestContext) {
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
+		logging.Error(err)
 		return
 	}
 	var uid int64

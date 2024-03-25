@@ -3,6 +3,7 @@ package mv
 import (
 	user2 "Hertz_refactored/biz/dal/db/user"
 	"Hertz_refactored/biz/model/user"
+	"Hertz_refactored/biz/pkg/logging"
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/errors"
@@ -63,6 +64,7 @@ func InitJwt() {
 
 		HTTPStatusMessageFunc: func(e error, ctx context.Context, c *app.RequestContext) string {
 			hlog.CtxErrorf(ctx, "jwt biz err = %+v", e.Error())
+			logging.Error(e)
 			return e.Error()
 		},
 

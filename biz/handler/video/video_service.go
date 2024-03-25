@@ -5,6 +5,7 @@ package video
 import (
 	video2 "Hertz_refactored/biz/dal/db/video"
 	"Hertz_refactored/biz/dal/redis"
+	"Hertz_refactored/biz/pkg/logging"
 	"context"
 	"encoding/json"
 	"github.com/sirupsen/logrus"
@@ -98,9 +99,14 @@ func VideoPopular(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp := new(video.VideoPopularResponse)
-
-	c.JSON(consts.StatusOK, resp)
+	//resp := new(video.VideoPopularResponse)
+	//ToDo :排行的显示功能有问题 可以在redis内直接查看
+	res, err := redis.RangeList("Rank")
+	if err != nil {
+		logging.Error(err)
+		return
+	}
+	c.JSON(consts.StatusOK, res)
 }
 
 func CacheSetAuthor(videoid, authorid int64) {

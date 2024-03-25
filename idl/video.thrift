@@ -60,8 +60,6 @@ struct VideoSearchResponse{
 }
 
 struct VideoPopularRequest{
-    1: i64   PageNum       (api.body="page_num", api.form="page_num",api.vd="$>0")
-    2: i64 PageSize (api.body="page_size", api.form="page_size",api.vd="(len($) > 0 && len($) < 1000)")
 }
 
 struct VideoPopularResponse{

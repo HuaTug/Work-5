@@ -5,6 +5,7 @@ import (
 	"Hertz_refactored/biz/model/comment"
 	"Hertz_refactored/biz/model/publish"
 	"Hertz_refactored/biz/model/video"
+	"Hertz_refactored/biz/pkg/logging"
 	"context"
 	"fmt"
 	"github.com/minio/minio-go/v7"
@@ -22,17 +23,24 @@ func UploadFile(file *multipart.FileHeader, req publish.UpLoadVideoRequest, uid 
 	minioClient, err := minio.New("127.0.0.1:9000", &minio.Options{
 		Creds: credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
 	})
+	if err != nil {
+		logging.Error(err)
+		return err
+	}
 	bucketName := req.BucketName
 	objectName := req.ObjectName + "." + req.ContentType
 	fmt.Println(objectName)
-	if err != nil {
-		exists, err3 := minioClient.BucketExists(context.Background(), bucketName)
-		if err3 == nil && exists {
-			log.Printf("Bucket %s already exists\n", bucketName)
-		} else {
-			log.Fatalln("Failed to create bucket:", err)
+
+	exists, err3 := minioClient.BucketExists(context.Background(), bucketName)
+	if err3 == nil && exists {
+		logging.Info("Bucket %s already exists\n", bucketName)
+	} else {
+		err = minioClient.MakeBucket(context.Background(), bucketName, minio.MakeBucketOptions{})
+		if err != nil {
+			log.Fatalln(err)
 		}
 	}
+
 	filePath := "C:\\Users\\0\\Downloads\\Video\\" + file.Filename
 	fmt.Println(filePath)
 	src, err := os.Open(filePath)
@@ -54,7 +62,7 @@ func UploadFile(file *multipart.FileHeader, req publish.UpLoadVideoRequest, uid 
 		Title:       file.Filename,
 		AuthorId:    uid,
 	}
-	logrus.Info("视频文件上传成功")
+	logrus.Info("文件上传成功")
 	mysql.Db.Model(&video.Video{}).Create(publishs)
 	return nil
 }

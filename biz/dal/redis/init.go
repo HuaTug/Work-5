@@ -1,6 +1,7 @@
 package redis
 
 import (
+	"Hertz_refactored/biz/pkg/logging"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -136,6 +137,28 @@ func CacheGet(key string) ([]byte, error) { //用于获取键
 	}
 
 	return reply, nil
+}
+
+// ToDO 为实现排行功能完成
+func RangeAdd(value, id int64) error {
+	conn := redisClient.Get()
+	defer conn.Close()
+	_, err := conn.Do("ZADD", "Rank", value, id)
+	if err != nil {
+		logging.Error(err)
+		return err
+	}
+	return nil
+}
+
+func RangeList(key string) ([]byte, error) {
+	conn := redisClient.Get()
+	defer conn.Close()
+	res, err := redis.Bytes(conn.Do("ZRevRange", key, 0, -1))
+	if err != nil {
+		logging.Error(err)
+	}
+	return res, nil
 }
 
 ///////////////////////////List类型接口////////////////////////////////////////

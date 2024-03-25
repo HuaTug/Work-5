@@ -2,7 +2,9 @@ package video
 
 import (
 	"Hertz_refactored/biz/dal/mysql"
+	"Hertz_refactored/biz/dal/redis"
 	"Hertz_refactored/biz/model/video"
+	"Hertz_refactored/biz/pkg/logging"
 	"github.com/sirupsen/logrus"
 )
 
@@ -12,6 +14,13 @@ func FeedList(req video.FeedServiceRequest) ([]*video.Video, error) {
 	if err := mysql.Db.Model(&video.Video{}).Where("publish_time<?", lateTime).Find(&videos).Error; err != nil {
 		logrus.Info(err)
 		return nil, err
+	}
+	//用这个redis自带的函数进行排序 完成一个排行榜的操作
+	for _, v := range videos {
+		err := redis.RangeAdd(v.FavoriteCount, v.VideoId)
+		if err != nil {
+			logging.Error(err)
+		}
 	}
 	//ToDo:这个业务逻辑如何处理
 	/*	for i, v := range videos {

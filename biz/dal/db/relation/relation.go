@@ -108,6 +108,8 @@ func CacheChangeUserCount(userid, op int64, types string) {
 		users.FollowerCount += op
 	case "like":
 		users.FavoriteCount += op
+	case "unlike":
+		users.FavoriteCount += op
 	}
 	user2.CacheSetUser(users)
 }
