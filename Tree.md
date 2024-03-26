@@ -1,3 +1,6 @@
+
+``项目结构``
+```
 ├─biz
 │  ├─config
 │  │      config.go
@@ -177,3 +180,4 @@ publish.thrift
 relation.thrift
 user.thrift
 video.thrift
+```
