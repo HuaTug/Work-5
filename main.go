@@ -3,22 +3,20 @@
 package main
 
 import (
-	chats "Hertz_refactored/biz/dal/db/chats/im"
-	"Hertz_refactored/biz/dal/db/chats/im/mq"
-	"Hertz_refactored/biz/dal/db/chats/im/mq/script"
-	"Hertz_refactored/biz/dal/mongodb"
-	"Hertz_refactored/biz/dal/mysql"
-	"Hertz_refactored/biz/dal/redis"
+	"Hertz_refactored/biz/config"
+	"Hertz_refactored/biz/dal/cache"
+	"Hertz_refactored/biz/dal/db"
+	"Hertz_refactored/biz/dal/db/mq/script"
 	"Hertz_refactored/biz/mv"
+	chats "Hertz_refactored/biz/service/chats/im"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
 func main() {
-	mysql.Init()
-	mongodb.Init()
-	redis.Init()
+	config.Init()
 	mv.InitJwt()
-	mq.InitRabbitMQ()
+	db.Init()
+	cache.Init()
 	script.LoadingScript()
 	h := server.Default(
 		server.WithStreamBody(true),

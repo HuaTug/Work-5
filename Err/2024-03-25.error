@@ -9,3 +9,4 @@
 [ERROR][init.go:159]2024/03/25 21:34:13 [redigo: unexpected type for Bytes, got type []interface {}]
 [ERROR][init.go:159]2024/03/25 21:41:03 [redigo: unexpected type for Bytes, got type []interface {}]
 [ERROR][init.go:159]2024/03/25 21:43:59 [redigo: unexpected type for Bytes, got type []interface {}]
+[ERROR][init.go:159]2024/03/25 21:44:31 [redigo: unexpected type for Bytes, got type []interface {}]

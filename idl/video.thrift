@@ -49,7 +49,7 @@ struct VideoSearchRequest{
    1: string Keyword (api.body="keyword", api.form="keyword",api.query="keyword")
    2: i64   PageNum     (api.body="page_num", api.form="page_num")
    3: i64 PageSize (api.body="page_size", api.form="page_size")
-   4: string FormDate (api.body="form_date",api.form="form_date")
+   4: string FromDate (api.body="from_date",api.form="from_date")
    5: string ToDate    (api.body="to_date",api.form="to_date")
 }
 struct VideoSearchResponse{

@@ -594,6 +594,7 @@ func (p *CreateUserRequest) String() string {
 type CreateUserResponse struct {
 	Code Code   `thrift:"code,1" form:"code" json:"code" query:"code"`
 	Msg  string `thrift:"msg,2" form:"msg" json:"msg" query:"msg"`
+	User *User  `thrift:"User,3" form:"User" json:"User" query:"User"`
 }
 
 func NewCreateUserResponse() *CreateUserResponse {
@@ -608,9 +609,23 @@ func (p *CreateUserResponse) GetMsg() (v string) {
 	return p.Msg
 }
 
+var CreateUserResponse_User_DEFAULT *User
+
+func (p *CreateUserResponse) GetUser() (v *User) {
+	if !p.IsSetUser() {
+		return CreateUserResponse_User_DEFAULT
+	}
+	return p.User
+}
+
 var fieldIDToName_CreateUserResponse = map[int16]string{
 	1: "code",
 	2: "msg",
+	3: "User",
+}
+
+func (p *CreateUserResponse) IsSetUser() bool {
+	return p.User != nil
 }
 
 func (p *CreateUserResponse) Read(iprot thrift.TProtocol) (err error) {
@@ -643,6 +658,14 @@ func (p *CreateUserResponse) Read(iprot thrift.TProtocol) (err error) {
 		case 2:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField2(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 3:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -695,6 +718,13 @@ func (p *CreateUserResponse) ReadField2(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
+func (p *CreateUserResponse) ReadField3(iprot thrift.TProtocol) error {
+	p.User = NewUser()
+	if err := p.User.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
 
 func (p *CreateUserResponse) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
@@ -708,6 +738,10 @@ func (p *CreateUserResponse) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField2(oprot); err != nil {
 			fieldId = 2
+			goto WriteFieldError
+		}
+		if err = p.writeField3(oprot); err != nil {
+			fieldId = 3
 			goto WriteFieldError
 		}
 	}
@@ -762,6 +796,23 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
 }
 
+func (p *CreateUserResponse) writeField3(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("User", thrift.STRUCT, 3); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := p.User.Write(oprot); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
+}
+
 func (p *CreateUserResponse) String() string {
 	if p == nil {
 		return "<nil>"
@@ -772,7 +823,7 @@ func (p *CreateUserResponse) String() string {
 
 type QueryUserRequest struct {
 	Keyword  *string `thrift:"Keyword,1,optional" form:"keyword" json:"keyword,omitempty" query:"keyword"`
-	Page     int64   `thrift:"page,2" form:"page" json:"page" query:"page" vd:"$ > 0"`
+	Page     int64   `thrift:"page,2" form:"page" form:"page" json:"page" query:"page" vd:"$ > 0"`
 	PageSize int64   `thrift:"page_size,3" form:"page_size" json:"page_size" query:"page_size" vd:"($ > 0 || $ <= 100)"`
 }
 
@@ -1908,7 +1959,7 @@ func (p *UpdateUserResponse) String() string {
 
 type LoginUserResquest struct {
 	Username string `thrift:"Username,1" form:"user_name" json:"user_name" vd:"(len($)>0&&len($)<100)"`
-	Password string `thrift:"Password,2" form:"password" json:"password" vd:"(len($)>0&&len($)<100)"`
+	Password string `thrift:"Password,2" form:"password" form:"password" json:"password" vd:"(len($)>0&&len($)<100)"`
 }
 
 func NewLoginUserResquest() *LoginUserResquest {

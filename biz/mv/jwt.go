@@ -1,9 +1,9 @@
 package mv
 
 import (
-	user2 "Hertz_refactored/biz/dal/db/user"
 	"Hertz_refactored/biz/model/user"
 	"Hertz_refactored/biz/pkg/logging"
+	user2 "Hertz_refactored/biz/service/user"
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/errors"

@@ -24,6 +24,7 @@ struct CreateUserRequest{
 struct CreateUserResponse{
    1: Code code
    2: string msg
+   3: User User
 }
 
 struct QueryUserRequest{

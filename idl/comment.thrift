@@ -11,11 +11,14 @@ struct Comment{
     3: string Comment
     4: string Time
     5: i64 UserId
+    6: i64 IndexId
 }
 
 struct CreateCommentRequest{
     1: i64 VideoId (api.body="video_id",api.form="video_id",api.vd="$>0")
     2: string Comment (api.body="comment",api.form="comment",api.vd="$>0")
+    3: i64  IndexId (api.body="index_id" ,api.form="index_id" )
+    4: i64 ActionType (api.body="action_type",api.form="action_type")
 }
 
 struct CreateCommentResponse{

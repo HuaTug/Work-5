@@ -925,8 +925,8 @@ func (p *FeedServiceResponse) String() string {
 
 type VideoFeedListRequest struct {
 	AuthorId int64 `thrift:"AuthorId,1" form:"author_id" json:"author_id"`
-	PageNum  int64 `thrift:"PageNum,2" form:"page_num" form:"page_num" json:"page_num"`
-	PageSize int64 `thrift:"PageSize,3" form:"page_size" form:"page_size" json:"page_size"`
+	PageNum  int64 `thrift:"PageNum,2" form:"page_num" json:"page_num"`
+	PageSize int64 `thrift:"PageSize,3" form:"page_size" json:"page_size"`
 }
 
 func NewVideoFeedListRequest() *VideoFeedListRequest {
@@ -1433,9 +1433,9 @@ func (p *VideoFeedListResponse) String() string {
 
 type VideoSearchRequest struct {
 	Keyword  string `thrift:"Keyword,1" form:"keyword" json:"keyword" query:"keyword"`
-	PageNum  int64  `thrift:"PageNum,2" form:"page_num" form:"page_num" json:"page_num"`
-	PageSize int64  `thrift:"PageSize,3" form:"page_size" json:"page_size"`
-	FormDate string `thrift:"FormDate,4" form:"form_date" json:"form_date"`
+	PageNum  int64  `thrift:"PageNum,2" form:"page_num" json:"page_num"`
+	PageSize int64  `thrift:"PageSize,3" form:"page_size" form:"page_size" json:"page_size"`
+	FromDate string `thrift:"FromDate,4" form:"from_date" form:"from_date" json:"from_date"`
 	ToDate   string `thrift:"ToDate,5" form:"to_date" form:"to_date" json:"to_date"`
 }
 
@@ -1455,8 +1455,8 @@ func (p *VideoSearchRequest) GetPageSize() (v int64) {
 	return p.PageSize
 }
 
-func (p *VideoSearchRequest) GetFormDate() (v string) {
-	return p.FormDate
+func (p *VideoSearchRequest) GetFromDate() (v string) {
+	return p.FromDate
 }
 
 func (p *VideoSearchRequest) GetToDate() (v string) {
@@ -1467,7 +1467,7 @@ var fieldIDToName_VideoSearchRequest = map[int16]string{
 	1: "Keyword",
 	2: "PageNum",
 	3: "PageSize",
-	4: "FormDate",
+	4: "FromDate",
 	5: "ToDate",
 }
 
@@ -1591,7 +1591,7 @@ func (p *VideoSearchRequest) ReadField4(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.FormDate = v
+		p.FromDate = v
 	}
 	return nil
 }
@@ -1701,10 +1701,10 @@ WriteFieldEndError:
 }
 
 func (p *VideoSearchRequest) writeField4(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("FormDate", thrift.STRING, 4); err != nil {
+	if err = oprot.WriteFieldBegin("FromDate", thrift.STRING, 4); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.FormDate); err != nil {
+	if err := oprot.WriteString(p.FromDate); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
