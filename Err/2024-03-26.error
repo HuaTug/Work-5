@@ -1,7 +1,0 @@
-[ERROR][jwt.go:67]2024/03/26 02:29:27 [token contains an invalid number of segments]
-[INFO][publish.go:36]2024/03/26 15:15:06 [Bucket %s already exists
- video]
-[INFO][publish.go:36]2024/03/26 15:15:24 [Bucket %s already exists
- video]
-[ERROR][comment.go:28]2024/03/26 15:15:55 [Error 1364 (HY000): Field 'index_id' doesn't have a default value]
-[ERROR][comment.go:28]2024/03/26 15:16:13 [Error 1364 (HY000): Field 'index_id' doesn't have a default value]

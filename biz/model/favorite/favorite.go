@@ -859,6 +859,7 @@ type Favorite struct {
 	FavoriteId int64 `thrift:"FavoriteId,1" form:"FavoriteId" json:"FavoriteId" query:"FavoriteId"`
 	UserId     int64 `thrift:"UserId,2" form:"UserId" json:"UserId" query:"UserId"`
 	VideoId    int64 `thrift:"VideoId,3" form:"VideoId" json:"VideoId" query:"VideoId"`
+	CommentId  int64 `thrift:"CommentId,4" form:"CommentId" json:"CommentId" query:"CommentId"`
 }
 
 func NewFavorite() *Favorite {
@@ -877,10 +878,15 @@ func (p *Favorite) GetVideoId() (v int64) {
 	return p.VideoId
 }
 
+func (p *Favorite) GetCommentId() (v int64) {
+	return p.CommentId
+}
+
 var fieldIDToName_Favorite = map[int16]string{
 	1: "FavoriteId",
 	2: "UserId",
 	3: "VideoId",
+	4: "CommentId",
 }
 
 func (p *Favorite) Read(iprot thrift.TProtocol) (err error) {
@@ -921,6 +927,14 @@ func (p *Favorite) Read(iprot thrift.TProtocol) (err error) {
 		case 3:
 			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField3(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 4:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField4(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -982,6 +996,15 @@ func (p *Favorite) ReadField3(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
+func (p *Favorite) ReadField4(iprot thrift.TProtocol) error {
+
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		p.CommentId = v
+	}
+	return nil
+}
 
 func (p *Favorite) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
@@ -999,6 +1022,10 @@ func (p *Favorite) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField3(oprot); err != nil {
 			fieldId = 3
+			goto WriteFieldError
+		}
+		if err = p.writeField4(oprot); err != nil {
+			fieldId = 4
 			goto WriteFieldError
 		}
 	}
@@ -1070,6 +1097,23 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
 }
 
+func (p *Favorite) writeField4(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("CommentId", thrift.I64, 4); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI64(p.CommentId); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
+}
+
 func (p *Favorite) String() string {
 	if p == nil {
 		return "<nil>"
@@ -1079,8 +1123,8 @@ func (p *Favorite) String() string {
 }
 
 type FavoriteRequest struct {
-	ActionType int64 `thrift:"ActionType,1" form:"action_type" form:"action_type" json:"action_type" vd:"($==0 ||$==1)"`
-	VideoId    int64 `thrift:"VideoId,2" form:"video_id" form:"video_id" json:"video_id" vd:"$>0"`
+	ActionType int64 `thrift:"ActionType,1" form:"action_type" json:"action_type" vd:"($==0 ||$==1)"`
+	CommentId  int64 `thrift:"CommentId,2" form:"comment_id" form:"comment_id" json:"comment_id"`
 }
 
 func NewFavoriteRequest() *FavoriteRequest {
@@ -1091,13 +1135,13 @@ func (p *FavoriteRequest) GetActionType() (v int64) {
 	return p.ActionType
 }
 
-func (p *FavoriteRequest) GetVideoId() (v int64) {
-	return p.VideoId
+func (p *FavoriteRequest) GetCommentId() (v int64) {
+	return p.CommentId
 }
 
 var fieldIDToName_FavoriteRequest = map[int16]string{
 	1: "ActionType",
-	2: "VideoId",
+	2: "CommentId",
 }
 
 func (p *FavoriteRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -1178,7 +1222,7 @@ func (p *FavoriteRequest) ReadField2(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
-		p.VideoId = v
+		p.CommentId = v
 	}
 	return nil
 }
@@ -1233,10 +1277,10 @@ WriteFieldEndError:
 }
 
 func (p *FavoriteRequest) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("VideoId", thrift.I64, 2); err != nil {
+	if err = oprot.WriteFieldBegin("CommentId", thrift.I64, 2); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI64(p.VideoId); err != nil {
+	if err := oprot.WriteI64(p.CommentId); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {

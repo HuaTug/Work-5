@@ -2,12 +2,23 @@ package db
 
 import (
 	"Hertz_refactored/biz/model/comment"
+	"Hertz_refactored/biz/pkg/logging"
 	"github.com/sirupsen/logrus"
 )
 
 func CreateComment(comment *comment.Comment) error {
 	return Db.Create(comment).Error
 }
+
+func GetMaxId() int64 {
+	var Id int64
+	if err := Db.Model(&comment.Comment{}).Select("MAX(comment_id)").Scan(&Id).Error; err != nil {
+		logging.Error(err)
+		return Id
+	}
+	return Id
+}
+
 func Exist(req comment.CreateCommentRequest) bool {
 	var count int64
 	if Db.Model(&comment.Comment{}).Where("comment_id=? and video_id=?", req.IndexId, req.VideoId).Count(&count); count == 0 {
@@ -16,6 +27,7 @@ func Exist(req comment.CreateCommentRequest) bool {
 	}
 	return true
 }
+
 func DeleteComment(comments comment.CommentDeleteRequest) error {
 	return Db.Model(&comment.Comment{}).Where("comment_id=? and video_id=?", comments.CommentId, comments.VideoId).Delete(comments).Error
 }

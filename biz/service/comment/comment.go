@@ -6,7 +6,6 @@ import (
 	"Hertz_refactored/biz/model/comment"
 	"Hertz_refactored/biz/pkg/logging"
 	"context"
-	"errors"
 	"time"
 )
 
@@ -26,10 +25,15 @@ func (s *CommentService) Create(req comment.CreateCommentRequest, userId int64) 
 		Time:    time.Now().Format(time.DateTime),
 		IndexId: req.IndexId,
 	}
-	if req.ActionType == 1 {
+	if req.ActionType == 1 && req.IndexId != 0 { //表示为非一级评论
 		if flag := db.Exist(req); flag == false {
-			return errors.New("无法找到对应的评论")
-		} else {
+			comments.IndexId = 0
+			if err := db.CreateComment(comments); err != nil {
+				logging.Error(err)
+				return err
+			}
+			logging.Info("新插入一条评论成功")
+		} else { //这样else后的逻辑就表示为一级逻辑
 			if err := db.CreateComment(comments); err != nil {
 				logging.Error(err)
 				return err
@@ -41,6 +45,8 @@ func (s *CommentService) Create(req comment.CreateCommentRequest, userId int64) 
 			return err
 		}
 	}
+	commentId := db.GetMaxId()
+	go cache.CacheSetCommentVideo(req.VideoId, commentId)
 	return nil
 }
 

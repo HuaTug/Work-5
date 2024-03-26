@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	LogSavePath = "Err/"
+	LogSavePath = "./biz/pkg/Err/" //将日志存放到特定位置
 	LogFileExt  = "error"
 	TimeFormat  = "2006-01-02"
 )

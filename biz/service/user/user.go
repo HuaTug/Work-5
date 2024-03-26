@@ -5,7 +5,9 @@ import (
 	"Hertz_refactored/biz/dal/db"
 	"Hertz_refactored/biz/model/user"
 	"Hertz_refactored/biz/pkg/logging"
+	"Hertz_refactored/biz/pkg/util"
 	"context"
+	"errors"
 	"fmt"
 	"github.com/sirupsen/logrus"
 )
@@ -20,9 +22,10 @@ func NewUserService(ctx context.Context) *UserService {
 }
 
 func (s *UserService) CreateUser(req user.CreateUserRequest) (users *user.User, err error) {
+	password, err := util.Crypt(req.Password)
 	User := &user.User{
 		UserName: req.Name,
-		Password: req.Password,
+		Password: password,
 	}
 	return db.CreateUser(s.ctx, User)
 }
@@ -39,13 +42,13 @@ func (s *UserService) LoginUser(req user.LoginUserResquest) (err error) {
 }
 
 // ToDo:这是对JWT 登录认证时候的检验 通过这种切片的方式完成
-func CheckUser(account, password string) ([]*user.User, error) {
-	res := make([]*user.User, 0)
-	if err := db.Db.Model(&user.User{}).Where("user_name =? AND password =?", account, password).
-		Find(&res).Error; err != nil {
-		return nil, err
+func CheckUser(account, password string) (user.User, error) {
+	var users user.User
+	db.Db.Model(&user.User{}).Where("user_name =?", account).Find(&users)
+	if flag := util.VerifyPassword(password, users.Password); flag == false {
+		return users, errors.New("密码错误")
 	}
-	return res, nil
+	return users, nil
 }
 
 func (s *UserService) GetInfo(userid int64) (User *user.User, err error) {
@@ -64,9 +67,10 @@ func (s *UserService) GetInfo(userid int64) (User *user.User, err error) {
 }
 
 func (s *UserService) Update(req user.UpdateUserRequest, userId int64) error {
+	password, _ := util.Crypt(req.Password)
 	User := &user.User{
 		UserName: req.Name,
-		Password: req.Password,
+		Password: password,
 	}
 	if err := db.UpdateUser(User, userId); err != nil {
 		logging.Info(err)

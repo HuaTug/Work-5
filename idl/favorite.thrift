@@ -28,11 +28,12 @@ struct Favorite{
     1:i64 FavoriteId
     2:i64 UserId
     3:i64 VideoId
+    4:i64 CommentId
 }
 
 struct FavoriteRequest{
     1: i64    ActionType    (api.body="action_type", api.form="action_type",api.vd="($==0 ||$==1)")
-    2: i64    VideoId      (api.body="video_id", api.form="video_id",api.vd="$>0")
+    2: i64    CommentId     (api.body="comment_id",api.form="comment_id")
 }
 
 struct FavoriteResponse{

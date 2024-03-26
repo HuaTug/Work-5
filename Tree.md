@@ -1,70 +1,59 @@
-├─.idea
-│      .gitignore
-│      Hertz_refactored.iml
-│      modules.xml
-│      workspace.xml
-│
 ├─biz
+│  ├─config
+│  │      config.go
+│  │      config.yaml
+│  │      mysql.sql
+│  │      types.go
+│  │
 │  ├─dal
-│  │  ├─db
-│  │  │  ├─chats
-│  │  │  │  │  chat.go
-│  │  │  │  │
-│  │  │  │  └─monitor
-│  │  │  │          chat.go
-│  │  │  │          init.go
-│  │  │  │          model.go
-│  │  │  │
-│  │  │  ├─comment
-│  │  │  │      comment.go
-│  │  │  │
-│  │  │  ├─favorite
-│  │  │  │      favorite.go
-│  │  │  │
-│  │  │  ├─publish
-│  │  │  │      publish.go
-│  │  │  │
-│  │  │  ├─relation
-│  │  │  │      relation.go
-│  │  │  │
-│  │  │  ├─user
-│  │  │  │      user.go
-│  │  │  │
-│  │  │  └─video
-│  │  │          video.go
-│  │  │
-│  │  ├─mongodb
+│  │  ├─cache
+│  │  │      comment.go
 │  │  │      init.go
+│  │  │      user.go
+│  │  │      video.go
 │  │  │
-│  │  ├─mysql
-│  │  │      init.go
-│  │  │
-│  │  └─redis
-│  │          init.go
+│  │  └─db
+│  │      │  chat.go
+│  │      │  comment.go
+│  │      │  favorite.go
+│  │      │  init.go
+│  │      │  relaiton.go
+│  │      │  user.go
+│  │      │  video.go
+│  │      │
+│  │      └─mq
+│  │          │  consumer.go
+│  │          │  producer.go
+│  │          │
+│  │          ├─script
+│  │          │      task.go
+│  │          │
+│  │          └─task
+│  │                  task_sync.go
 │  │
 │  ├─handler
 │  │  │  ping.go
-│  │  │
+│  │  │  
 │  │  ├─chat
-│  │  │      chat_service.go
+│  │  │      chat_handler.go
 │  │  │
 │  │  ├─comment
-│  │  │      comment_service.go
+│  │  │      comment_handler.go
 │  │  │
 │  │  ├─favorite
-│  │  │      favorite_service.go
+│  │  │      favorite_handler.go
 │  │  │
 │  │  ├─publish
-│  │  │      up_load_video_service.go
+│  │  │      up_load_video_handler.go
 │  │  │
 │  │  ├─relation
-│  │  │      follow_service.go
+│  │  │      follow_handler.go
 │  │  │
 │  │  ├─user
-│  │  │      user_service.go
+│  │  │      user_handler.go
 │  │  │
 │  │  └─video
-│  │          video_service.go
+│  │          video_handler.go
 │  │
 │  ├─model
 │  │  ├─chat
@@ -92,45 +81,21 @@
 │  │      jwt.go
 │  │
 │  ├─pack
+│  │      sequence.go
 │  │      user.go
 │  │
 │  ├─pkg
 │  │  │  code.go
 │  │  │  msg.go
 │  │  │
-│  │  ├─configs
-│  │  │  ├─minio
-│  │  │  │      config
-│  │  │  │
-│  │  │  ├─redis
-│  │  │  │      redis.conf
-│  │  │  │
-│  │  │  └─sql
-│  │  │          init.sql
-│  │  │
-│  │  ├─constants
-│  │  │      constant.go
-│  │  │
-│  │  ├─data
-│  │  │  └─minio
-│  │  │      ├─avatar
-│  │  │      │  └─test1.jpg
-│  │  │      │      │  xl.meta
-│  │  │      │      │
-│  │  │      │      └─0df91c0b-64d7-4dae-9c69-e06189c23615
-│  │  │      │              part.1
-│  │  │      │
-│  │  │      └─background
-│  │  │          └─test1.png
-│  │  │              │  xl.meta
-│  │  │              │
-│  │  │              └─653fd01e-49bc-462f-866d-f552e51eaf61
-│  │  │                      part.1
-│  │  │
 │  │  ├─errno
 │  │  │      errno.go
 │  │  │
-│  │  └─utils
+│  │  ├─logging
+│  │  │      file.go
+│  │  │      log.go
+│  │  │
+│  │  └─util
 │  │          crypto.go
 │  │          resp.go
 │  │          time.go
@@ -146,7 +111,7 @@
 │  │  ├─comment
 │  │  │      comment.go
 │  │  │      middleware.go
-│  │  │      
+│  │  │
 │  │  ├─favorite
 │  │  │      favorite.go
 │  │  │      middleware.go
@@ -167,8 +132,42 @@
 │  │          middleware.go
 │  │          video.go
 │  │
+│  ├─service
+│  │  ├─chats
+│  │  │  │  chat.go
+│  │  │  │
+│  │  │  └─im
+│  │  │          chat.go
+│  │  │          init.go
+│  │  │          model.go
+│  │  │
+│  │  ├─comment
+│  │  │      comment.go
+│  │  │
+│  │  ├─favorite
+│  │  │      favorite.go
+│  │  │
+│  │  ├─publish
+│  │  │      publish.go
+│  │  │
+│  │  ├─relation
+│  │  │      relation.go
+│  │  │
+│  │  ├─user
+│  │  │      user.go
+│  │  │
+│  │  └─video
+│  │          video.go
+│  │
 │  └─utils
+│          dsn.go
 │          md5.go
+│          transfer.go
+│
+├─Err
+│      2024-03-25.error
+│      2024-03-26.error
+│      2024-03-27.error
 │
 └─idl
 chat.thrift
@@ -178,4 +177,3 @@ publish.thrift
 relation.thrift
 user.thrift
 video.thrift
-

@@ -3,7 +3,8 @@ package mv
 import (
 	"Hertz_refactored/biz/model/user"
 	"Hertz_refactored/biz/pkg/logging"
-	user2 "Hertz_refactored/biz/service/user"
+	user_service "Hertz_refactored/biz/service/user"
+	utils2 "Hertz_refactored/biz/utils"
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/errors"
@@ -26,7 +27,7 @@ func InitJwt() {
 		Realm:       "test zone",
 		Key:         []byte("secret key"),
 		Timeout:     time.Hour * 24 * 30,
-		MaxRefresh:  time.Hour * 24 * 30,
+		MaxRefresh:  time.Second * 2,
 		IdentityKey: identity,
 		TokenLookup: "query:token,form:token",
 		Authenticator: func(ctx context.Context, c *app.RequestContext) (interface{}, error) {
@@ -34,23 +35,33 @@ func InitJwt() {
 			if err := c.BindAndValidate(&loginRequest); err != nil {
 				return nil, err
 			}
-			users, err := user2.CheckUser(loginRequest.Username, loginRequest.Password)
+			users, err := user_service.CheckUser(loginRequest.Username, loginRequest.Password)
 			if err != nil {
-				panic(err)
+				c.JSON(http.StatusBadRequest, "登录失败")
+				logging.Error(err)
+				return nil, err
 			}
-			if len(users) == 0 {
+			if users.UserName == "" || users.Password == "" {
 				return nil, errors.NewPublic("user already exists or wrong password")
 			}
-			c.Set("user_id", users[0].UserID)
-			return users[0].UserID, nil
+			c.Set("user_id", users.UserID)
+			//生成refresh_token , 并且设置键值对映射
+			_, refretoken, _ := utils2.GenerateToken(users.UserID, users.UserName)
+			c.Set("refresh", refretoken)
+			return users.UserID, nil
 		},
+
 		LoginResponse: func(ctx context.Context, c *app.RequestContext, code int, token string, expire time.Time) {
+
 			c.Set("token", token)
+			v, _ := c.Get("refresh")
+			refresh := v.(string)
 			c.JSON(http.StatusOK, utils.H{
-				"code":    code,
-				"token":   token,
-				"expire":  expire.Format(time.DateTime),
-				"message": "success",
+				"code":          code,
+				"access_token":  token,
+				"refresh_token": refresh,
+				"expire":        expire.Format(time.DateTime),
+				"message":       "success",
 			})
 		},
 		PayloadFunc: func(data interface{}) jwt.MapClaims {

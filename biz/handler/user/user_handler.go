@@ -103,6 +103,7 @@ func LoginUser(ctx context.Context, c *app.RequestContext) {
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		logging.Info(err)
+		c.JSON(consts.StatusBadRequest, "登录失败")
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}

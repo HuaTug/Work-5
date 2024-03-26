@@ -11,158 +11,9 @@
 
 [https://apifox.com/apidoc/shared-16d8fec9-45b1-4607-b6ff-6957b9a4e215]
 
-`主要业务逻辑`
+`业务架构`
 ```
-
-├─biz
-│  ├─dal
-│  │  ├─db
-│  │  │  ├─chats
-│  │  │  │  │  chat.go
-│  │  │  │  │
-│  │  │  │  └─monitor
-│  │  │  │          chat.go
-│  │  │  │          init.go
-│  │  │  │          model.go
-│  │  │  │
-│  │  │  ├─comment
-│  │  │  │      comment.go
-│  │  │  │
-│  │  │  ├─favorite
-│  │  │  │      favorite.go
-│  │  │  │
-│  │  │  ├─publish
-│  │  │  │      publish.go
-│  │  │  │
-│  │  │  ├─relation
-│  │  │  │      relation.go
-│  │  │  │
-│  │  │  ├─user
-│  │  │  │      user.go
-│  │  │  │
-│  │  │  └─video
-│  │  │          video.go
-│  │  │
-│  │  ├─mongodb
-│  │  │      init.go
-│  │  │
-│  │  ├─mysql
-│  │  │      init.go
-│  │  │
-│  │  └─redis
-│  │          init.go
-│  │
-│  ├─handler
-│  │  │  ping.go
-│  │  │
-│  │  ├─chat
-│  │  │      chat_service.go
-│  │  │
-│  │  ├─comment
-│  │  │      comment_service.go
-│  │  │
-│  │  ├─favorite
-│  │  │      favorite_service.go
-│  │  │
-│  │  ├─publish
-│  │  │      up_load_video_service.go
-│  │  │
-│  │  ├─relation
-│  │  │      follow_service.go
-│  │  │
-│  │  ├─user
-│  │  │      user_service.go
-│  │  │
-│  │  └─video
-│  │          video_service.go
-│  │
-│  ├─model
-│  │  ├─chat
-│  │  │      chat.go
-│  │  │
-│  │  ├─comment
-│  │  │      comment.go
-│  │  │
-│  │  ├─favorite
-│  │  │      favorite.go
-│  │  │
-│  │  ├─publish
-│  │  │      publish.go
-│  │  │
-│  │  ├─relation
-│  │  │      relation.go
-│  │  │
-│  │  ├─user
-│  │  │      user.go
-│  │  │
-│  │  └─video
-│  │          video.go
-│  │
-│  ├─mv
-│  │      jwt.go
-│  │
-│  ├─pack
-│  │      user.go
-│  │
-│  ├─pkg
-│  │  │  code.go
-│  │  │  msg.go
-│  │  │
-│  │  ├─configs
-│  │  │  ├─minio
-│  │  │  │      config
-│  │  │  │
-│  │  │  ├─redis
-│  │  │  │      redis.conf
-│  │  │  │
-│  │  │  └─sql
-│  │  │          init.sql
-│  │  │
-│  │  ├─constants
-│  │       constant.go       
-│  │
-│  ├─router
-│  │  │  register.go
-│  │  │
-│  │  ├─chat
-│  │  │      chat.go
-│  │  │      middleware.go
-│  │  │
-│  │  ├─comment
-│  │  │      comment.go
-│  │  │      middleware.go
-│  │  │      
-│  │  ├─favorite
-│  │  │      favorite.go
-│  │  │      middleware.go
-│  │  │
-│  │  ├─publish
-│  │  │      middleware.go
-│  │  │      publish.go
-│  │  │
-│  │  ├─relation
-│  │  │      middleware.go
-│  │  │      relation.go
-│  │  │
-│  │  ├─user
-│  │  │      middleware.go
-│  │  │      user.go
-│  │  │
-│  │  └─video
-│  │          middleware.go
-│  │          video.go
-│  │
-│  └─utils
-│          md5.go
-│
-└─idl
-        chat.thrift
-        comment.thrift
-        favorite.thrift
-        publish.thrift
-        relation.thrift
-        user.thrift
-        video.thrift
+见Tree.md文件
 ```
 ## 日志
 `3.14`
@@ -183,33 +34,36 @@
 ----------------------------
 下午解决了 在项目中看注释
 ----------------------------
-3.20号晚
 完成了websocket两人聊天的demo
+```
 ----------------------------
-3.23号
+`3.23`
+```
 引入了RabbitMQ，完成对于离线状态下消息的通道缓存，并且引入了Redis完成了基础的增删改查，减缓了数据库的查询压力
-----------------------------
-3.25号
+```
+`3.25号`
+```
 项目结构不规范 没有建立三层架构 于是进行修改
-----------------------------
-3.26号
-更改为三层架构 将Bonus完成
+```
+`3.26号`
+```
+更改为三层架构 将Bonus完成 完成了所有的接口 剩下的就是对其进行优化
 ```
 ### 需要优化的地方：
 
 `Redis的引入`
 ```
-
+完成
 ```
 `RabiitMq 消息队列的引入`
 ```
-
+完成
 ```
 
 ## 待完成项
 ~~1 .评论接口需要实现对评论进行评论~~
 
-2 .点赞接口需要处理对评论的点赞
+~~2 .点赞接口需要处理对评论的点赞~~
 
 ~~3 .社交模块：完成基于 websocket 的聊天功能，考虑到聊天的实时性，请使用 Redis + MySQL 方式实现~~
 
