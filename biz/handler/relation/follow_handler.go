@@ -4,8 +4,8 @@ package relation
 
 import (
 	"Hertz_refactored/biz/model/relation"
+	"Hertz_refactored/biz/pkg/utils"
 	relation_service "Hertz_refactored/biz/service/relation"
-	"Hertz_refactored/biz/utils"
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"

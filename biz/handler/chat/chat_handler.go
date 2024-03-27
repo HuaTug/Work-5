@@ -5,8 +5,8 @@ package chat
 import (
 	"Hertz_refactored/biz/model/chat"
 	"Hertz_refactored/biz/pkg/logging"
+	"Hertz_refactored/biz/pkg/utils"
 	chat_service "Hertz_refactored/biz/service/chats"
-	"Hertz_refactored/biz/utils"
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
 	_ "github.com/cloudwego/hertz/pkg/app/server"

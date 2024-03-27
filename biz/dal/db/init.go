@@ -2,7 +2,7 @@ package db
 
 import (
 	"Hertz_refactored/biz/config"
-	"Hertz_refactored/biz/utils"
+	"Hertz_refactored/biz/pkg/utils"
 	"context"
 	"github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
