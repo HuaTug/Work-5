@@ -4,8 +4,8 @@ package favorite
 
 import (
 	"Hertz_refactored/biz/model/favorite"
+	"Hertz_refactored/biz/pkg/utils"
 	favorite_service "Hertz_refactored/biz/service/favorite"
-	"Hertz_refactored/biz/utils"
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
