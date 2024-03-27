@@ -28,6 +28,7 @@ func (s *UserService) CreateUser(req user.CreateUserRequest) (users *user.User, 
 		Password: password,
 	}
 	return db.CreateUser(s.ctx, User)
+
 }
 
 func (s *UserService) LoginUser(req user.LoginUserResquest) (err error) {
@@ -49,6 +50,7 @@ func CheckUser(account, password string) (user.User, error) {
 		return users, errors.New("密码错误")
 	}
 	return users, nil
+
 }
 
 func (s *UserService) GetInfo(userid int64) (User *user.User, err error) {
