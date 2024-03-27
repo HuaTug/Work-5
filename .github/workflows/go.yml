@@ -26,5 +26,6 @@ jobs:
           version: v1.54
     - name: Cache
       uses: actions/cache@v4.0.2
+
     - name: Build
       run: go build -v ./...

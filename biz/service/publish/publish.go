@@ -8,7 +8,7 @@ import (
 	"Hertz_refactored/biz/pkg/logging"
 	"context"
 	"fmt"
-	"github.com/minio/minio-go/v7"
+	minios "github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/sirupsen/logrus"
 	"log"
@@ -20,7 +20,7 @@ import (
 func UploadFile(file *multipart.FileHeader, req publish.UpLoadVideoRequest, uid int64) error {
 	accessKeyID := "minioadmin"
 	secretAccessKey := "minioadmin"
-	minioClient, err := minio.New("127.0.0.1:9000", &minio.Options{
+	minioClient, err := minios.New("127.0.0.1:9000", &minios.Options{
 		Creds: credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
 	})
 	if err != nil {
@@ -35,7 +35,7 @@ func UploadFile(file *multipart.FileHeader, req publish.UpLoadVideoRequest, uid 
 	if err3 == nil && exists {
 		logging.Info("Bucket %s already exists\n", bucketName)
 	} else {
-		err = minioClient.MakeBucket(context.Background(), bucketName, minio.MakeBucketOptions{})
+		err = minioClient.MakeBucket(context.Background(), bucketName, minios.MakeBucketOptions{})
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -49,7 +49,7 @@ func UploadFile(file *multipart.FileHeader, req publish.UpLoadVideoRequest, uid 
 		return err
 	}
 	defer src.Close()
-	_, err = minioClient.PutObject(context.Background(), bucketName, objectName, src, -1, minio.PutObjectOptions{})
+	_, err = minioClient.PutObject(context.Background(), bucketName, objectName, src, -1, minios.PutObjectOptions{})
 	if err != nil {
 		logrus.Info(err)
 		return err
