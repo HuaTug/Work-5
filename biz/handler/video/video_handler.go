@@ -3,8 +3,6 @@
 package video
 
 import (
-	"Hertz_refactored/biz/dal/cache"
-	"Hertz_refactored/biz/pkg/logging"
 	video_service "Hertz_refactored/biz/service/video"
 	"context"
 	"github.com/sirupsen/logrus"
@@ -92,13 +90,14 @@ func VideoPopular(ctx context.Context, c *app.RequestContext) {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
-
-	//resp := new(video.VideoPopularResponse)
-	//ToDo :排行的显示功能有问题 可以在redis内直接查看
-	res, err := cache.RangeList("Rank")
+	res, err := video_service.NewVideoService(ctx).VideoPopular()
 	if err != nil {
-		logging.Error(err)
+		logrus.Error(err)
 		return
 	}
-	c.JSON(consts.StatusOK, res)
+	c.JSON(consts.StatusOK, video.VideoPopularResponse{
+		Code:    consts.StatusOK,
+		Msg:     "排行榜",
+		Popular: res,
+	})
 }

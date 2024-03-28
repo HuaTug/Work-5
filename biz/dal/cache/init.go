@@ -8,14 +8,14 @@ import (
 	"github.com/sirupsen/logrus"
 	"time"
 
-	"github.com/go-redsync/redsync/v4"
+	redsyncs "github.com/go-redsync/redsync/v4"
 	"github.com/go-redsync/redsync/v4/redis/redigo"
 	"github.com/gomodule/redigo/redis"
 )
 
 var (
 	redisClient *redis.Pool
-	rs          *redsync.Redsync
+	rs          *redsyncs.Redsync
 	//锁过期时间
 	lockExpiry = 2 * time.Second
 	//获取锁失败重试时间间隔
@@ -24,9 +24,9 @@ var (
 	valueExpire  = 3600 * 24 * 30
 	ErrMissCache = errors.New("miss Cache")
 	//锁设置
-	option = []redsync.Option{
-		redsync.WithExpiry(lockExpiry),
-		redsync.WithRetryDelay(retryDelay),
+	option = []redsyncs.Option{
+		redsyncs.WithExpiry(lockExpiry),
+		redsyncs.WithRetryDelay(retryDelay),
 	}
 )
 
@@ -54,7 +54,7 @@ func Init() {
 	//这条指令每次会把redis的缓存清空
 	//redisClient.Get().Do("flushdb")
 	sync := redigo.NewPool(redisClient)
-	rs = redsync.New(sync)
+	rs = redsyncs.New(sync)
 	logrus.Info("redis conn success")
 
 }
@@ -78,7 +78,7 @@ func Exists(key string) bool {
 	return exists
 }
 
-func GetLock(key string) (*redsync.Mutex, error) {
+func GetLock(key string) (*redsyncs.Mutex, error) {
 	mutex := rs.NewMutex(key+"_lock", option...)
 	if err := mutex.Lock(); err != nil {
 		return mutex, err
@@ -86,7 +86,7 @@ func GetLock(key string) (*redsync.Mutex, error) {
 	return mutex, nil
 }
 
-func UnLock(mutex *redsync.Mutex) error {
+func UnLock(mutex *redsyncs.Mutex) error {
 	if _, err := mutex.Unlock(); err != nil {
 		return err
 	}
@@ -149,10 +149,10 @@ func RangeAdd(value, id int64) error {
 	return nil
 }
 
-func RangeList(key string) ([]byte, error) {
+func RangeList(key string) ([]string, error) {
 	conn := redisClient.Get()
 	defer conn.Close()
-	res, err := redis.Bytes(conn.Do("ZRevRange", key, 0, -1))
+	res, err := redis.Strings(conn.Do("ZRevRange", key, 0, -1))
 	if err != nil {
 		logging.Error(err)
 	}

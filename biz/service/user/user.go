@@ -36,10 +36,11 @@ func (s *UserService) LoginUser(req user.LoginUserResquest) (err error) {
 		UserName: req.Username,
 		Password: req.Password,
 	}
-	if err := db.VerifyUser(s.ctx, User); err != nil {
-		return err
+	if errs := db.VerifyUser(s.ctx, User); errs != nil {
+		return errs
 	}
 	return nil
+
 }
 
 // ToDo:这是对JWT 登录认证时候的检验 通过这种切片的方式完成

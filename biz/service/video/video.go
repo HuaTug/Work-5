@@ -6,6 +6,8 @@ import (
 	"Hertz_refactored/biz/model/video"
 	"Hertz_refactored/biz/pkg/logging"
 	"context"
+	"github.com/sirupsen/logrus"
+	"strconv"
 )
 
 type VideoService struct {
@@ -67,4 +69,26 @@ func (s *VideoService) VideoSearch(req video.VideoSearchRequest) ([]*video.Video
 		return video, count, err
 	}
 	return video, count, err
+}
+
+func (s *VideoService) VideoPopular() (videos []*video.Video, err error) {
+	//resp := new(video.VideoPopularResponse)
+	//ToDo :排行的显示功能有问题 可以在redis内直接查看
+	res, err := cache.RangeList("Rank")
+	if err != nil {
+		logging.Error(err)
+		return
+	}
+	var temp *video.Video
+	for i := 0; i < len(res); i++ {
+		v, err := strconv.Atoi(res[i])
+		if err != nil {
+			logrus.Info(err)
+			return videos, err
+		}
+		temp, _ = db.FindVideo(int64(v))
+		videos = append(videos, temp)
+
+	}
+	return videos, nil
 }

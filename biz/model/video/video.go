@@ -925,7 +925,7 @@ func (p *FeedServiceResponse) String() string {
 
 type VideoFeedListRequest struct {
 	AuthorId int64 `thrift:"AuthorId,1" form:"author_id" json:"author_id"`
-	PageNum  int64 `thrift:"PageNum,2" form:"page_num" json:"page_num"`
+	PageNum  int64 `thrift:"PageNum,2" form:"page_num" form:"page_num" json:"page_num"`
 	PageSize int64 `thrift:"PageSize,3" form:"page_size" json:"page_size"`
 }
 
@@ -1434,9 +1434,9 @@ func (p *VideoFeedListResponse) String() string {
 type VideoSearchRequest struct {
 	Keyword  string `thrift:"Keyword,1" form:"keyword" json:"keyword" query:"keyword"`
 	PageNum  int64  `thrift:"PageNum,2" form:"page_num" json:"page_num"`
-	PageSize int64  `thrift:"PageSize,3" form:"page_size" form:"page_size" json:"page_size"`
-	FromDate string `thrift:"FromDate,4" form:"from_date" form:"from_date" json:"from_date"`
-	ToDate   string `thrift:"ToDate,5" form:"to_date" form:"to_date" json:"to_date"`
+	PageSize int64  `thrift:"PageSize,3" form:"page_size" json:"page_size"`
+	FromDate string `thrift:"FromDate,4" form:"from_date" json:"from_date"`
+	ToDate   string `thrift:"ToDate,5" form:"to_date" json:"to_date"`
 }
 
 func NewVideoSearchRequest() *VideoSearchRequest {
@@ -2108,8 +2108,9 @@ func (p *VideoPopularRequest) String() string {
 }
 
 type VideoPopularResponse struct {
-	Code Code1  `thrift:"code,1" form:"code" json:"code" query:"code"`
-	Msg  string `thrift:"msg,2" form:"msg" json:"msg" query:"msg"`
+	Code    Code1    `thrift:"code,1" form:"code" json:"code" query:"code"`
+	Msg     string   `thrift:"msg,2" form:"msg" json:"msg" query:"msg"`
+	Popular []*Video `thrift:"Popular,3" form:"Popular" json:"Popular" query:"Popular"`
 }
 
 func NewVideoPopularResponse() *VideoPopularResponse {
@@ -2124,9 +2125,14 @@ func (p *VideoPopularResponse) GetMsg() (v string) {
 	return p.Msg
 }
 
+func (p *VideoPopularResponse) GetPopular() (v []*Video) {
+	return p.Popular
+}
+
 var fieldIDToName_VideoPopularResponse = map[int16]string{
 	1: "code",
 	2: "msg",
+	3: "Popular",
 }
 
 func (p *VideoPopularResponse) Read(iprot thrift.TProtocol) (err error) {
@@ -2159,6 +2165,14 @@ func (p *VideoPopularResponse) Read(iprot thrift.TProtocol) (err error) {
 		case 2:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField2(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 3:
+			if fieldTypeId == thrift.LIST {
+				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
@@ -2211,6 +2225,25 @@ func (p *VideoPopularResponse) ReadField2(iprot thrift.TProtocol) error {
 	}
 	return nil
 }
+func (p *VideoPopularResponse) ReadField3(iprot thrift.TProtocol) error {
+	_, size, err := iprot.ReadListBegin()
+	if err != nil {
+		return err
+	}
+	p.Popular = make([]*Video, 0, size)
+	for i := 0; i < size; i++ {
+		_elem := NewVideo()
+		if err := _elem.Read(iprot); err != nil {
+			return err
+		}
+
+		p.Popular = append(p.Popular, _elem)
+	}
+	if err := iprot.ReadListEnd(); err != nil {
+		return err
+	}
+	return nil
+}
 
 func (p *VideoPopularResponse) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
@@ -2224,6 +2257,10 @@ func (p *VideoPopularResponse) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField2(oprot); err != nil {
 			fieldId = 2
+			goto WriteFieldError
+		}
+		if err = p.writeField3(oprot); err != nil {
+			fieldId = 3
 			goto WriteFieldError
 		}
 	}
@@ -2276,6 +2313,31 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+}
+
+func (p *VideoPopularResponse) writeField3(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("Popular", thrift.LIST, 3); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteListBegin(thrift.STRUCT, len(p.Popular)); err != nil {
+		return err
+	}
+	for _, v := range p.Popular {
+		if err := v.Write(oprot); err != nil {
+			return err
+		}
+	}
+	if err := oprot.WriteListEnd(); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
 }
 
 func (p *VideoPopularResponse) String() string {

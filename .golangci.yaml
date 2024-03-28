@@ -1,0 +1,9 @@
+linters:
+  disable-all: true
+  enable:
+    - gocyclo         # 代码复杂度
+    - ineffassign     # 无效赋值
+    - errcheck        #检查在Go代码中是否有忽略错误的语句
+    - goconst
+   # - unparam
+   # - unused
