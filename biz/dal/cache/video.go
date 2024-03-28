@@ -1,13 +1,15 @@
 package cache
 
 import (
-	"Hertz_refactored/biz/model/video"
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/go-redis/redis/v8"
-	"github.com/sirupsen/logrus"
 	"strconv"
+
+	Redis "github.com/go-redis/redis/v8"
+	"github.com/sirupsen/logrus"
+
+	"Hertz_refactored/biz/model/video"
 )
 
 func CacheSetAuthor(videoid, authorid int64) {
@@ -54,7 +56,7 @@ func Insert(videos []*video.Video) {
 			}
 		}
 		logrus.Info("Pipe执行完毕")*/
-	client := redis.NewClient(&redis.Options{
+	client := Redis.NewClient(&Redis.Options{
 		Addr:     "localhost:6379",
 		Password: "", // no password set
 		DB:       1,  // use default DB

@@ -1,18 +1,20 @@
-package mv
+package mv //nolint:gofmt
 
 import (
-	"Hertz_refactored/biz/model/user"
-	"Hertz_refactored/biz/pkg/logging"
-	utils2 "Hertz_refactored/biz/pkg/utils"
-	user_service "Hertz_refactored/biz/service/user"
 	"context"
+	"net/http"
+	"time"
+
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/errors"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/hertz-contrib/jwt"
-	"net/http"
-	"time"
+
+	"Hertz_refactored/biz/model/user"
+	"Hertz_refactored/biz/pkg/logging"
+	utils2 "Hertz_refactored/biz/pkg/utils"
+	user_service "Hertz_refactored/biz/service/user"
 )
 
 var (
@@ -55,14 +57,15 @@ func InitJwt() {
 
 			c.Set("token", token)
 			v, _ := c.Get("refresh")
-			refresh := v.(string)
-			c.JSON(http.StatusOK, utils.H{
-				"code":          code,
-				"access_token":  token,
-				"refresh_token": refresh,
-				"expire":        expire.Format(time.DateTime),
-				"message":       "success",
-			})
+			if refresh, ok := v.(string); ok {
+				c.JSON(http.StatusOK, utils.H{
+					"code":          code,
+					"access_token":  token,
+					"refresh_token": refresh,
+					"expire":        expire.Format(time.DateTime),
+					"message":       "success",
+				})
+			}
 		},
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
 			if v, ok := data.(int64); ok {

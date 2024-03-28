@@ -2,16 +2,18 @@ package utils
 
 import (
 	"errors"
-	jwts "github.com/golang-jwt/jwt/v4"
 	"time"
+
+	jwt "github.com/golang-jwt/jwt/v4"
 )
 
 var SecretKey = []byte("NigTusg")
 
 type Claims struct {
-	Uid      int64  `json:"uid"`
-	UserName string `json:"user_name"`
-	jwts.StandardClaims
+	Uid       int64  `json:"uid"`
+	UserName  string `json:"user_name"`
+	ExpiresAt int64  `json:"exp"`
+	jwt.StandardClaims
 }
 
 // GenerateToken 签发給用户token
@@ -21,17 +23,17 @@ func GenerateToken(uid int64, username string) (accessToken, refreshToken string
 	claims := Claims{
 		Uid:      uid,
 		UserName: username,
-		StandardClaims: jwts.StandardClaims{
+		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: int64(acExpireTime),
 		},
 	}
 
-	accessToken, err = jwts.NewWithClaims(jwts.SigningMethodHS256, claims).SignedString(SecretKey)
+	accessToken, err = jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString(SecretKey)
 	if err != nil {
 		return "", "", err
 	}
 
-	refreshToken, err = jwts.NewWithClaims(jwts.SigningMethodHS256, jwts.StandardClaims{
+	refreshToken, err = jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
 		ExpiresAt: int64(reExpireTime),
 	}).SignedString(SecretKey)
 	if err != nil {
@@ -42,8 +44,8 @@ func GenerateToken(uid int64, username string) (accessToken, refreshToken string
 
 // ParseToken 验证用户token
 func ParseToken(token string) (*Claims, error) {
-	tokenClaims, err := jwts.ParseWithClaims(token,
-		&Claims{}, func(t *jwts.Token) (interface{}, error) { return SecretKey, nil })
+	tokenClaims, err := jwt.ParseWithClaims(token,
+		&Claims{}, func(t *jwt.Token) (interface{}, error) { return SecretKey, nil })
 	if tokenClaims != nil {
 		if Claims, ok := tokenClaims.Claims.(*Claims); ok && tokenClaims.Valid {
 			return Claims, nil

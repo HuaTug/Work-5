@@ -1,4 +1,4 @@
-package config
+package config //nolint:gofmt
 
 import (
 	"Hertz_refactored/biz/pkg/logging"

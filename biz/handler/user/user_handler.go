@@ -3,14 +3,16 @@
 package user
 
 import (
+	"context"
+
+	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/protocol/consts"
+
 	user "Hertz_refactored/biz/model/user"
 	"Hertz_refactored/biz/pack"
 	"Hertz_refactored/biz/pkg/logging"
 	"Hertz_refactored/biz/pkg/utils"
 	user_service "Hertz_refactored/biz/service/user"
-	"context"
-	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
 // UpdateUser .

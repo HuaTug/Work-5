@@ -1,15 +1,17 @@
 package user
 
 import (
-	"Hertz_refactored/biz/dal/cache"
 	"Hertz_refactored/biz/dal/db"
-	"Hertz_refactored/biz/model/user"
-	"Hertz_refactored/biz/pkg/logging"
-	"Hertz_refactored/biz/pkg/util"
 	"context"
 	"errors"
 	"fmt"
+
 	"github.com/sirupsen/logrus"
+
+	"Hertz_refactored/biz/dal/cache"
+	"Hertz_refactored/biz/model/user"
+	"Hertz_refactored/biz/pkg/logging"
+	"Hertz_refactored/biz/pkg/util"
 )
 
 type UserService struct {
@@ -17,12 +19,13 @@ type UserService struct {
 }
 
 // ToDo:通过调用这个函数，满足handler层可以通过这个接口调用service内的业务逻辑
+
 func NewUserService(ctx context.Context) *UserService {
 	return &UserService{ctx: ctx}
 }
 
-func (s *UserService) CreateUser(req user.CreateUserRequest) (users *user.User, err error) {
-	password, err := util.Crypt(req.Password)
+func (s *UserService) CreateUser(req user.CreateUserRequest) (*user.User, error) {
+	password, _ := util.Crypt(req.Password)
 	User := &user.User{
 		UserName: req.Name,
 		Password: password,
@@ -44,6 +47,7 @@ func (s *UserService) LoginUser(req user.LoginUserResquest) (err error) {
 }
 
 // ToDo:这是对JWT 登录认证时候的检验 通过这种切片的方式完成
+
 func CheckUser(account, password string) (user.User, error) {
 	var users user.User
 	db.Db.Model(&user.User{}).Where("user_name =?", account).Find(&users)

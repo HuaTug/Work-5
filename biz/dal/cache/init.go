@@ -1,16 +1,17 @@
 package cache
 
 import (
-	"Hertz_refactored/biz/config"
-	"Hertz_refactored/biz/pkg/logging"
 	"encoding/json"
 	"errors"
-	"github.com/sirupsen/logrus"
 	"time"
 
 	redsyncs "github.com/go-redsync/redsync/v4"
 	"github.com/go-redsync/redsync/v4/redis/redigo"
 	"github.com/gomodule/redigo/redis"
+	"github.com/sirupsen/logrus"
+
+	"Hertz_refactored/biz/config"
+	"Hertz_refactored/biz/pkg/logging"
 )
 
 var (
@@ -63,12 +64,20 @@ func GetRedis() redis.Conn {
 	return redisClient.Get()
 }
 func CloseRedis() {
-	redisClient.Close()
+	err := redisClient.Close()
+	if err != nil {
+		return
+	}
 }
 
 func Exists(key string) bool {
 	conn := redisClient.Get()
-	defer conn.Close()
+	defer func(conn redis.Conn) {
+		err := conn.Close()
+		if err != nil {
+
+		}
+	}(conn)
 
 	exists, err := redis.Bool(conn.Do("EXISTS", key))
 	if err != nil {
@@ -99,7 +108,12 @@ func CacheSet(key string, data interface{}) error {
 	//这个函数里面有两个参数,一个是key作为缓存项的键,另一个为dat,空接口,表示为它可以接受任何类型的数据
 	conn := redisClient.Get()
 	//redisClient是一个已经初始化的Redis客户端对象，它有一个Get()方法用于获取一个Redis连接
-	defer conn.Close()
+	defer func(conn redis.Conn) {
+		err := conn.Close()
+		if err != nil {
+
+		}
+	}(conn)
 	value, err := json.Marshal(data)
 	if err != nil {
 		return err
@@ -121,7 +135,12 @@ func CacheSet(key string, data interface{}) error {
 
 func CacheGet(key string) ([]byte, error) { //用于获取键
 	conn := redisClient.Get()
-	defer conn.Close()
+	defer func(conn redis.Conn) {
+		err := conn.Close()
+		if err != nil {
+
+		}
+	}(conn)
 
 	reply, err := redis.Bytes(conn.Do("GET", key))
 	//这是一个辅助函数（可能是go-redis库提供的），用于将Redis命令的响应转换为字节切片（[]byte）
@@ -140,7 +159,12 @@ func CacheGet(key string) ([]byte, error) { //用于获取键
 // ToDO 为实现排行功能完成
 func RangeAdd(value, id int64) error {
 	conn := redisClient.Get()
-	defer conn.Close()
+	defer func(conn redis.Conn) {
+		err := conn.Close()
+		if err != nil {
+
+		}
+	}(conn)
 	_, err := conn.Do("ZADD", "Rank", value, id)
 	if err != nil {
 		logging.Error(err)
@@ -151,7 +175,12 @@ func RangeAdd(value, id int64) error {
 
 func RangeList(key string) ([]string, error) {
 	conn := redisClient.Get()
-	defer conn.Close()
+	defer func(conn redis.Conn) {
+		err := conn.Close()
+		if err != nil {
+
+		}
+	}(conn)
 	res, err := redis.Strings(conn.Do("ZRevRange", key, 0, -1))
 	if err != nil {
 		logging.Error(err)
@@ -206,7 +235,12 @@ func listPush(op, key string, data ...interface{}) error {
 
 func listPop(op, key string) ([]byte, error) {
 	conn := redisClient.Get()
-	defer conn.Close()
+	defer func(conn redis.Conn) {
+		err := conn.Close()
+		if err != nil {
+
+		}
+	}(conn)
 
 	reply, err := redis.Bytes(conn.Do(op, key))
 	if err != nil {
@@ -220,7 +254,12 @@ func listPop(op, key string) ([]byte, error) {
 
 func CacheHSet(key, mkey string, value ...interface{}) error {
 	conn := redisClient.Get()
-	defer conn.Close()
+	defer func(conn redis.Conn) {
+		err := conn.Close()
+		if err != nil {
+
+		}
+	}(conn)
 
 	for _, d := range value {
 		data, err := json.Marshal(d)
@@ -238,7 +277,12 @@ func CacheHSet(key, mkey string, value ...interface{}) error {
 
 func CacheHGet(key, mkey string) ([]byte, error) {
 	conn := redisClient.Get()
-	defer conn.Close()
+	defer func(conn redis.Conn) {
+		err := conn.Close()
+		if err != nil {
+
+		}
+	}(conn)
 
 	data, err := redis.Bytes(conn.Do("HGET", key, mkey))
 	//fmt.Printf("data:%v", data)
@@ -252,7 +296,12 @@ func CacheHGet(key, mkey string) ([]byte, error) {
 }
 func CacheHGet2(key, mkey string) (string, error) {
 	conn := redisClient.Get()
-	defer conn.Close()
+	defer func(conn redis.Conn) {
+		err := conn.Close()
+		if err != nil {
+
+		}
+	}(conn)
 
 	data, err := redis.String(conn.Do("HGET", key, mkey))
 	//fmt.Printf("data:%v", data)
@@ -264,7 +313,12 @@ func CacheHGet2(key, mkey string) (string, error) {
 func CacheDelHash(key, mkey string) error {
 
 	conn := redisClient.Get()
-	defer conn.Close()
+	defer func(conn redis.Conn) {
+		err := conn.Close()
+		if err != nil {
+
+		}
+	}(conn)
 
 	_, err := conn.Do("HDEL", key, mkey)
 	if err != nil {
@@ -276,7 +330,12 @@ func CacheDelHash(key, mkey string) error {
 func CacheDelHash2(key, mkey, comment_id string) error {
 
 	conn := redisClient.Get()
-	defer conn.Close()
+	defer func(conn redis.Conn) {
+		err := conn.Close()
+		if err != nil {
+
+		}
+	}(conn)
 
 	_, err := conn.Do("HDEL", key, mkey, comment_id)
 	if err != nil {

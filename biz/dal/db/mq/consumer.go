@@ -1,10 +1,12 @@
 package mq
 
 import (
-	"Hertz_refactored/biz/dal/db"
 	"context"
+
 	"github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
+
+	"Hertz_refactored/biz/dal/db"
 )
 
 func ConsumeMessage(ctx context.Context, queueName string) (<-chan amqp.Delivery, error) {

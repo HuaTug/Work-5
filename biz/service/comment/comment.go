@@ -1,12 +1,13 @@
 package comment
 
 import (
+	"context"
+	"time"
+
 	"Hertz_refactored/biz/dal/cache"
 	"Hertz_refactored/biz/dal/db"
 	"Hertz_refactored/biz/model/comment"
 	"Hertz_refactored/biz/pkg/logging"
-	"context"
-	"time"
 )
 
 type CommentService struct {
@@ -46,7 +47,12 @@ func (s *CommentService) Create(req comment.CreateCommentRequest, userId int64) 
 		}
 	}
 	commentId := db.GetMaxId()
-	go cache.CacheSetCommentVideo(req.VideoId, commentId)
+	go func() {
+		err := cache.CacheSetCommentVideo(req.VideoId, commentId)
+		if err != nil {
+			logging.Error(err)
+		}
+	}()
 	return nil
 }
 
