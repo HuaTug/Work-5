@@ -41,3 +41,12 @@ func Videosearch(req video.VideoSearchRequest) ([]*video.Video, int64, error) {
 func VideoCreate(videos video.Video) error {
 	return Db.Model(&video.Video{}).Create(videos).Error
 }
+
+func FindVideo(videoId int64) (videos *video.Video, err error) {
+	if err = Db.Model(&video.Video{}).Where("video_id=?", videoId).Find(&videos).Error; err != nil {
+		logrus.Error(err)
+		return videos, err
+	}
+	return videos, err
+
+}

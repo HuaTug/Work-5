@@ -149,10 +149,10 @@ func RangeAdd(value, id int64) error {
 	return nil
 }
 
-func RangeList(key string) ([]byte, error) {
+func RangeList(key string) ([]string, error) {
 	conn := redisClient.Get()
 	defer conn.Close()
-	res, err := redis.Bytes(conn.Do("ZRevRange", key, 0, -1))
+	res, err := redis.Strings(conn.Do("ZRevRange", key, 0, -1))
 	if err != nil {
 		logging.Error(err)
 	}

@@ -65,8 +65,8 @@ struct VideoPopularRequest{
 struct VideoPopularResponse{
     1:Code1 code
     2:string msg
+    3:list<Video> Popular
 }
-
 
 service VideoService {
    FeedServiceResponse FeedService(1:FeedServiceRequest req)(api.get="/v1/feed")
