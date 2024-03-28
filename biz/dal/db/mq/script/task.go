@@ -1,9 +1,10 @@
-package script
+package script //nolint:gofmt
 
 import (
-	"Hertz_refactored/biz/dal/db/mq/task"
-	"context"
+	"context" //nolint:gofmt
 	"log"
+
+	"Hertz_refactored/biz/dal/db/mq/task" //nolint:goimports
 )
 
 func TaskCreateSync(ctx context.Context) {
@@ -11,6 +12,7 @@ func TaskCreateSync(ctx context.Context) {
 	err := Sync.RunTaskCreate(ctx)
 	if err != nil {
 		log.Printf("RunTaskCreate: %s", err)
+
 	}
 }
 func LoadingScript() {

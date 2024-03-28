@@ -1,4 +1,4 @@
-package chats
+package chats //nolint:gofmt
 
 import (
 	"Hertz_refactored/biz/model/chat"
