@@ -1,4 +1,4 @@
-package im
+package im //nolint:gofmt
 
 import "github.com/hertz-contrib/websocket"
 

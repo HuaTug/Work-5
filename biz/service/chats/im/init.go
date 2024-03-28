@@ -1,4 +1,4 @@
-package im
+package im //nolint:gofmt
 
 import (
 	"Hertz_refactored/biz/dal/db"

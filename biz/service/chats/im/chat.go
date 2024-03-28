@@ -1,4 +1,4 @@
-package im
+package im //nolint:gofmt
 
 import (
 	"encoding/json"
@@ -14,7 +14,7 @@ import (
 	e "Hertz_refactored/biz/pkg"
 )
 
-func (c *Client) Read() {
+func (c *Client) Write() {
 	defer func() {
 		Manager.Leave <- c
 		_ = c.Socket.Close()
@@ -69,7 +69,7 @@ func (c *Client) Read() {
 	}
 }
 
-func (c *Client) Write() {
+func (c *Client) Read() {
 	defer func() {
 		_ = c.Socket.Close()
 	}()
