@@ -15,6 +15,10 @@
 
 [https://a0fgr0eyrxd.feishu.cn/docx/PWVndH9sUofOy0x4iXpcAXmVnce?openbrd=1&doc_app_id=501&blockId=doxcn7jJLeQWQTxiUXmsQpRsuzf&blockType=whiteboard&blockToken=HQxRw2qCwh4I94bN1azckkZ5ndd#doxcn7jJLeQWQTxiUXmsQpRsuzf]
 
+
+接口文档
+
+[https://a0fgr0eyrxd.feishu.cn/docx/Vz86drRYHoCNTixo62ocWxwbnHh?openbrd=1&doc_app_id=501&blockId=doxcnUukRabp79vH85sYqJiSYcb&blockType=whiteboard&blockToken=Wikbw1R1PhOytsbvggPcDOLln7g#doxcnUukRabp79vH85sYqJiSYcb ]
 `业务架构`
 ```
 详细见Tree.md文件
@@ -63,6 +67,8 @@
 完成所有接口的编写
 完成了golangci-lint本地静态部署
 如果想将输出的日志定向到本地 可以使用golangci-lint run >[文件路径] 命令
+
+完成了接口文档的编写
 ```
 ### 需要优化的地方：
 
