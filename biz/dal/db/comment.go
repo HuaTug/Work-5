@@ -1,4 +1,4 @@
-package db
+package db //nolint:gofmt
 
 import (
 	"Hertz_refactored/biz/model/comment"
@@ -21,7 +21,8 @@ func GetMaxId() int64 {
 
 func Exist(req comment.CreateCommentRequest) bool {
 	var count int64
-	if Db.Model(&comment.Comment{}).Where("comment_id=? and video_id=?", req.IndexId, req.VideoId).Count(&count); count == 0 {
+	if Db.Model(&comment.Comment{}).Where("comment_id=? and video_id=?", req.IndexId, req.VideoId).
+		Count(&count); count == 0 {
 		logrus.Info("没有对应的视频评论")
 		return false
 	}
@@ -29,7 +30,8 @@ func Exist(req comment.CreateCommentRequest) bool {
 }
 
 func DeleteComment(comments comment.CommentDeleteRequest) error {
-	return Db.Model(&comment.Comment{}).Where("comment_id=? and video_id=?", comments.CommentId, comments.VideoId).Delete(comments).Error
+	return Db.Model(&comment.Comment{}).Where("comment_id=? and video_id=?", comments.CommentId, comments.VideoId).
+		Delete(comments).Error
 }
 
 func ListComment(List comment.ListCommentRequest) ([]*comment.Comment, int64, error) {
@@ -38,6 +40,8 @@ func ListComment(List comment.ListCommentRequest) ([]*comment.Comment, int64, er
 	}
 	var total int64
 	var comments []*comment.Comment
-	err := Db.Model(&comment.Comment{}).Where("video_id=?", List.VideoId).Count(&total).Limit(int(List.PageSize)).Offset(int((List.PageNum - 1) * List.PageSize)).Find(&comments).Error
+	err := Db.Model(&comment.Comment{}).Where("video_id=?", List.VideoId).Count(&total).
+		Limit(int(List.PageSize)).Offset(int((List.PageNum - 1) * List.PageSize)).
+		Find(&comments).Error
 	return comments, total, err
 }

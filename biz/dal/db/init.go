@@ -1,4 +1,4 @@
-package db
+package db //nolint:gofmt
 
 import (
 	"Hertz_refactored/biz/config"
@@ -49,7 +49,10 @@ func MongoDB() {
 	InitRabbitMQ()
 }
 func InitRabbitMQ() {
-	conn, err := amqp.Dial("amqp://" + config.ConfigInfo.RabbitMq.Username + ":" + config.ConfigInfo.RabbitMq.Password + "@" + config.ConfigInfo.RabbitMq.Addr + "/")
+	conn, err := amqp.Dial("amqp://" +
+		config.ConfigInfo.RabbitMq.Username + ":" +
+		config.ConfigInfo.RabbitMq.Password + "@" +
+		config.ConfigInfo.RabbitMq.Addr + "/")
 	if err != nil {
 		logrus.Info(err)
 	}

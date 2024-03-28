@@ -3,14 +3,16 @@
 package chat
 
 import (
+	"context"
+
+	"github.com/cloudwego/hertz/pkg/app"
+	_ "github.com/cloudwego/hertz/pkg/app/server"
+	"github.com/cloudwego/hertz/pkg/protocol/consts"
+
 	"Hertz_refactored/biz/model/chat"
 	"Hertz_refactored/biz/pkg/logging"
 	"Hertz_refactored/biz/pkg/utils"
 	chat_service "Hertz_refactored/biz/service/chats"
-	"context"
-	"github.com/cloudwego/hertz/pkg/app"
-	_ "github.com/cloudwego/hertz/pkg/app/server"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
 // Chat .

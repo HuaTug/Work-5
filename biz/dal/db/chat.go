@@ -8,9 +8,10 @@ func CreateMessage(message *chat.Message) error {
 	return Db.Model(&chat.Message{}).Create(message).Error
 }
 
-func GetMessage(id, to_id int64) ([]*chat.Message, error) {
+func GetMessage(id, toId int64) ([]*chat.Message, error) {
 	var msgs []*chat.Message
-	if err := Db.Model(&chat.Message{}).Where("receiver_id=? And sender_id=? And state=?", id, to_id, 0).Find(&msgs).Error; err != nil {
+	if err := Db.Model(&chat.Message{}).Where("receiver_id=? And sender_id=? And state=?", id, toId, 0).
+		Find(&msgs).Error; err != nil {
 		return msgs, err
 	}
 	return msgs, nil

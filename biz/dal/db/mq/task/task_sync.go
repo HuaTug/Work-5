@@ -1,15 +1,17 @@
 package task
 
 import (
-	"Hertz_refactored/biz/dal/db"
-	"Hertz_refactored/biz/dal/db/mq"
-	"Hertz_refactored/biz/model/chat"
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
+
 	"github.com/hertz-contrib/websocket"
 	"github.com/sirupsen/logrus"
-	"log"
+
+	"Hertz_refactored/biz/dal/db"
+	"Hertz_refactored/biz/dal/db/mq"
+	"Hertz_refactored/biz/model/chat"
 )
 
 type SendMsg struct {
@@ -80,7 +82,11 @@ func (s *SyncTask) RunTaskCreate(ctx context.Context) error {
 				log.Printf("Received run Task: %s", err)
 			}
 			SendToMessage(reqRabbitMQ)
-			d.Ack(false)
+			err = d.Ack(false)
+			if err != nil {
+				logrus.Error(err)
+				return
+			}
 		}
 	}()
 

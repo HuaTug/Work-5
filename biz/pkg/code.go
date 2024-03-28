@@ -1,4 +1,4 @@
-package e
+package utils //nolint:gofmt
 
 const (
 	SUCCESS               = 200

@@ -1,10 +1,12 @@
-package cache
+package cache //nolint:gofmt
 
 import (
-	"Hertz_refactored/biz/model/user"
 	"encoding/json"
-	"github.com/sirupsen/logrus"
 	"strconv"
+
+	"github.com/sirupsen/logrus"
+
+	"Hertz_refactored/biz/model/user"
 )
 
 func CacheIdAndName(u int64, username string) {
@@ -36,15 +38,15 @@ func CacheSetUser(u *user.User) {
 func CacheGetUser(id int64) (*user.User, error) {
 	key := strconv.FormatInt(id, 10)
 	data, err := CacheGet("user:" + key)
-	user := &user.User{}
+	users := &user.User{}
 	if err != nil {
 		logrus.Info(err)
-		return user, err
+		return users, err
 	}
-	_ = json.Unmarshal(data, &user)
+	_ = json.Unmarshal(data, &users)
 	if err != nil {
 		logrus.Info(err)
-		return user, err
+		return users, err
 	}
-	return user, nil
+	return users, nil
 }

@@ -1,11 +1,15 @@
-package cache
-
+package cache //nolint:gofmt
+/*
+在Go语言中 import声明通常按照以下顺序组织：标准库包，空行，第三方包，空行，项目内部包
+*/
 import (
+	"encoding/json"
+	"strconv"
+
+	"github.com/sirupsen/logrus"
+
 	"Hertz_refactored/biz/model/comment"
 	"Hertz_refactored/biz/pkg/logging"
-	"encoding/json"
-	"github.com/sirupsen/logrus"
-	"strconv"
 )
 
 func CacheSetAllComment(videoId int64, c []*comment.Comment) {
@@ -22,7 +26,7 @@ func CacheGetListComment(videoId int64) ([]*comment.Comment, error) {
 	if err != nil {
 		return comments, err
 	}
-	err = json.Unmarshal(data, &comments)
+	_ = json.Unmarshal(data, &comments)
 	return comments, nil
 }
 
@@ -42,6 +46,6 @@ func CacheGetCommentVideo(commentId int64) (videoId int64, err error) {
 	if err != nil {
 		return videoId, err
 	}
-	err = json.Unmarshal(data, &videoId)
+	_ = json.Unmarshal(data, &videoId)
 	return videoId, nil
 }

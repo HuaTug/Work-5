@@ -29,8 +29,11 @@ func Videosearch(req video.VideoSearchRequest) ([]*video.Video, int64, error) {
 	var video2 []*video.Video
 	var count int64
 	if req.Keyword != "" {
-		if err := Db.Model(&video.Video{}).Where("title like ?", "%"+req.Keyword+"%").Or("publish_time<? &&publish_time>?", req.ToDate, req.FromDate).Count(&count).
-			Limit(int(req.PageSize)).Offset(int((req.PageNum - 1) * req.PageSize)).Find(&video2).Error; err != nil {
+		if err := Db.Model(&video.Video{}).
+			Where("title like ?", "%"+req.Keyword+"%").
+			Or("publish_time<? &&publish_time>?", req.ToDate, req.FromDate).Count(&count).
+			Limit(int(req.PageSize)).Offset(int((req.PageNum - 1) * req.PageSize)).
+			Find(&video2).Error; err != nil {
 			logrus.Info(err)
 			return video2, count, err
 		}
