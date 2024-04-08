@@ -12,6 +12,7 @@ import (
 	"Hertz_refactored/biz/dal/db"
 	"Hertz_refactored/biz/dal/db/mq"
 	"Hertz_refactored/biz/model/chat"
+	"Hertz_refactored/biz/model/comment"
 )
 
 type SendMsg struct {
@@ -53,6 +54,10 @@ var Manager = ClientManager{
 	Leave:     make(chan *Client),
 }
 
+type CommentQueueStruct struct {
+	dataChan chan comment.Comment
+	msgChan  chan []byte
+}
 type SyncTask struct {
 }
 
@@ -76,12 +81,24 @@ func (s *SyncTask) RunTaskCreate(ctx context.Context) error {
 	go func() {
 		for d := range msgs {
 			//ToDo ：这里还要继续进行完善
-			reqRabbitMQ := new(chat.Message)
-			err := json.Unmarshal(d.Body, reqRabbitMQ)
+			//reqRabbitMQ := new(chat.Message)
+			reqRabbitMQ2 := new(comment.Comment)
+
+			/*err := json.Unmarshal(d.Body, reqRabbitMQ)
 			if err != nil {
 				log.Printf("Received run Task: %s", err)
 			}
-			SendToMessage(reqRabbitMQ)
+			*/
+
+			err = json.Unmarshal(d.Body, reqRabbitMQ2)
+			if err != nil {
+				log.Printf("Received run Task2: %s", err)
+			}
+			log.Print(reqRabbitMQ2.Comment)
+			err := db.CreateComment(reqRabbitMQ2)
+			if err != nil {
+				logrus.Info(err)
+			}
 			err = d.Ack(false)
 			if err != nil {
 				logrus.Error(err)

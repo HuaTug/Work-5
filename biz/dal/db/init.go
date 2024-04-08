@@ -4,6 +4,7 @@ import (
 	"Hertz_refactored/biz/config"
 	"Hertz_refactored/biz/pkg/utils"
 	"context"
+
 	"github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -53,9 +54,6 @@ func InitRabbitMQ() {
 		config.ConfigInfo.RabbitMq.Username + ":" +
 		config.ConfigInfo.RabbitMq.Password + "@" +
 		config.ConfigInfo.RabbitMq.Addr + "/")
-	if err != nil {
-		logrus.Info(err)
-	}
 	if err != nil {
 		logrus.Info(err)
 	}

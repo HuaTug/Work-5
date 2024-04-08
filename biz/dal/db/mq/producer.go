@@ -2,12 +2,16 @@ package mq
 
 import (
 	"Hertz_refactored/biz/dal/db"
+
 	"github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 )
 
 func SendMessageMQ(body []byte) (err error) {
 	ch, err := db.RabbitMq.Channel()
+	/*
+		在Go语言中，ch, err := db.RabbitMq.Channel() 这行代码通常表示从db.RabbitMq对象中获取一个RabbitMQ的Channel
+	*/
 	if err != nil {
 		logrus.Info(err)
 	}

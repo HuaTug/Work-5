@@ -1,7 +1,7 @@
 mysql:
   addr: localhost:3306
   username: root
-  password: 123456
+  password: root
   charset: utf8mb4
   database: Hertz
 

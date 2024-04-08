@@ -2,12 +2,16 @@ package comment
 
 import (
 	"context"
+	"encoding/json"
 	"time"
 
 	"Hertz_refactored/biz/dal/cache"
 	"Hertz_refactored/biz/dal/db"
+	"Hertz_refactored/biz/dal/db/mq"
 	"Hertz_refactored/biz/model/comment"
 	"Hertz_refactored/biz/pkg/logging"
+
+	"github.com/sirupsen/logrus"
 )
 
 type CommentService struct {
@@ -17,7 +21,13 @@ type CommentService struct {
 func NewCommentService(ctx context.Context) *CommentService {
 	return &CommentService{ctx: ctx}
 }
-
+func SendComment(data *comment.Comment) error {
+	msg, err := json.Marshal(data)
+	if err != nil {
+		logrus.Info(err)
+	}
+	return mq.SendMessageMQ(msg)
+}
 func (s *CommentService) Create(req comment.CreateCommentRequest, userId int64) error {
 	comments := &comment.Comment{
 		VideoId: req.VideoId,
@@ -29,19 +39,19 @@ func (s *CommentService) Create(req comment.CreateCommentRequest, userId int64) 
 	if req.ActionType == 1 && req.IndexId != 0 { //表示为非一级评论
 		if flag := db.Exist(req); flag == false {
 			comments.IndexId = 0
-			if err := db.CreateComment(comments); err != nil {
+			if err := SendComment(comments); err != nil {
 				logging.Error(err)
 				return err
 			}
 			logging.Info("新插入一条评论成功")
 		} else { //这样else后的逻辑就表示为一级逻辑
-			if err := db.CreateComment(comments); err != nil {
+			if err := SendComment(comments); err != nil {
 				logging.Error(err)
 				return err
 			}
 		}
 	} else {
-		if err := db.CreateComment(comments); err != nil {
+		if err := SendComment(comments); err != nil {
 			logging.Error(err)
 			return err
 		}
