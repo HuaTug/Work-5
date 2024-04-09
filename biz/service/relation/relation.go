@@ -23,9 +23,12 @@ func NewRelationService(ctx context.Context) *RelationService {
 	return &RelationService{ctx: ctx}
 }
 func (s *RelationService) Following(req relation.RelationServiceRequest, id int64) error {
+	key := "relation_id"
+	Id := cache.GenerateID(key)
 	Relation := &relation.Relation{
-		FollowId: req.ToUserId,
-		UserId:   id,
+		RelationId: Id,
+		FollowId:   req.ToUserId,
+		UserId:     id,
 	}
 	if req.ActionType == 1 {
 		if err := db.Follow(Relation); err != nil {

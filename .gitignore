@@ -23,19 +23,4 @@ _testmain.go
 *.cfg
 *.pptx
 *.log
-<<<<<<< HEAD
 test
-=======
->>>>>>> main
-*nohup.out
-*settings.pyc
-*.sublime-project
-*.sublime-workspace
-!.gitkeep
-.DS_Store
-/.idea
-/.vscode
-/biz/data
-/output
-*.local.yml
-dumped_hertz_remote_config.json
