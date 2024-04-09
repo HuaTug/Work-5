@@ -23,7 +23,10 @@ _testmain.go
 *.cfg
 *.pptx
 *.log
+<<<<<<< HEAD
 test
+=======
+>>>>>>> main
 *nohup.out
 *settings.pyc
 *.sublime-project

@@ -90,6 +90,7 @@ func CreateUser(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 	resp := new(user.CreateUserResponse)
+<<<<<<< HEAD
 	userResp, err := user_service.NewUserService(ctx).CreateUser(req,ctx)
 	if err!=nil{
 		resp.Code = consts.StatusBadRequest
@@ -97,6 +98,9 @@ func CreateUser(ctx context.Context, c *app.RequestContext) {
 		c.JSON(consts.StatusBadRequest,resp)
 		return 
 	}
+=======
+	userResp, err := user_service.NewUserService(ctx).CreateUser(req)
+>>>>>>> main
 	resp.Code = consts.StatusOK
 	resp.Msg = "创建用户成功"
 	c.JSON(consts.StatusOK, resp)

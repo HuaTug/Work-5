@@ -3,7 +3,10 @@ package comment
 import (
 	"context"
 	"encoding/json"
+<<<<<<< HEAD
 	"sync"
+=======
+>>>>>>> main
 	"time"
 
 	"Hertz_refactored/biz/dal/cache"
@@ -19,8 +22,11 @@ type CommentService struct {
 	ctx context.Context
 }
 
+<<<<<<< HEAD
 var wg sync.WaitGroup
 
+=======
+>>>>>>> main
 func NewCommentService(ctx context.Context) *CommentService {
 	return &CommentService{ctx: ctx}
 }
@@ -70,6 +76,7 @@ func (s *CommentService) Create(req comment.CreateCommentRequest, userId int64) 
 }
 
 func (s *CommentService) Delete(req comment.CommentDeleteRequest) error {
+<<<<<<< HEAD
 	wg.Add(1)
 	var err error
 	go func() {
@@ -82,6 +89,12 @@ func (s *CommentService) Delete(req comment.CommentDeleteRequest) error {
 		return err
 	}
 	wg.Wait()
+=======
+	if err := db.DeleteComment(req); err != nil {
+		logging.Error(err)
+		return err
+	}
+>>>>>>> main
 	return nil
 }
 
@@ -92,8 +105,11 @@ func (s *CommentService) List(req comment.ListCommentRequest) ([]*comment.Commen
 	comments, err = cache.CacheGetListComment(req.VideoId)
 	if err != nil {
 		logging.Error(err)
+<<<<<<< HEAD
 	}else{
 		return comments,total,err
+=======
+>>>>>>> main
 	}
 	comments, total, err = db.ListComment(req)
 	if err != nil {
