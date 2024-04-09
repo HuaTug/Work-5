@@ -36,7 +36,10 @@ func SendComment(data *comment.Comment) error {
 	return mq.SendMessageMQ(msg)
 }
 func (s *CommentService) Create(req comment.CreateCommentRequest, userId int64) error {
+	key:="comment_id"
+	Id:=cache.GenerateID(key)
 	comments := &comment.Comment{
+		CommentId: Id,
 		VideoId: req.VideoId,
 		Comment: req.Comment,
 		UserId:  userId,
@@ -63,7 +66,7 @@ func (s *CommentService) Create(req comment.CreateCommentRequest, userId int64) 
 			return err
 		}
 	}
-	commentId := db.GetMaxId()
+	commentId := db.GetMaxId()+1
 	go func() {
 		err := cache.CacheSetCommentVideo(req.VideoId, commentId)
 		if err != nil {

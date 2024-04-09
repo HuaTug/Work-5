@@ -1,6 +1,7 @@
 package publish
 
 import (
+	"Hertz_refactored/biz/dal/cache"
 	"Hertz_refactored/biz/dal/db"
 	"Hertz_refactored/biz/model/comment"
 	"Hertz_refactored/biz/model/publish"
@@ -21,6 +22,8 @@ import (
 
 func UploadFile(file *multipart.FileHeader, req publish.UpLoadVideoRequest, uid int64) error {
 	var wg sync.WaitGroup
+	key := "video_id"
+	Id := cache.GenerateID(key)
 	accessKeyID := "minioadmin"
 	secretAccessKey := "minioadmin"
 	minioClient, err := minio.New("127.0.0.1:9000", &minio.Options{
@@ -49,10 +52,10 @@ func UploadFile(file *multipart.FileHeader, req publish.UpLoadVideoRequest, uid 
 	switch req.ContentType {
 	case "video/mp4":
 		filePath = "/home/xuzh/Videos/" + file.Filename
-		objectName=req.ObjectName+".mp4"
-	case "png","jpg","jpeg":
-		filePath="/home/xuzh/Pictures/"+file.Filename
-		objectName=req.ObjectName+".jpg"
+		objectName = req.ObjectName + ".mp4"
+	case "png", "jpg", "jpeg":
+		filePath = "/home/xuzh/Pictures/" + file.Filename
+		objectName = req.ObjectName + ".jpg"
 	}
 
 	fmt.Println(filePath)
@@ -72,6 +75,7 @@ func UploadFile(file *multipart.FileHeader, req publish.UpLoadVideoRequest, uid 
 	wg.Wait()
 
 	publishs := video.Video{
+		VideoId:     Id,
 		PlayUrl:     filePath,
 		CoverUrl:    comment.Comment{}.Comment,
 		PublishTime: time.Now().Format(time.DateTime),

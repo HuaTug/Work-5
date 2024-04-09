@@ -11,3 +11,15 @@
 [INFO][publish.go:41]2024/04/09 15:23:40 [Bucket %s already exists
  picture]
 [ERROR][comment.go:94]2024/04/09 15:24:15 [redigo: nil returned]
+[ERROR][video.go:70]2024/04/09 20:38:19 [sql: expected 1 arguments, got 4]
+[ERROR][video.go:70]2024/04/09 20:38:26 [sql: expected 1 arguments, got 4]
+[ERROR][jwt.go:43]2024/04/09 23:21:14 [密码错误]
+[ERROR][jwt.go:81]2024/04/09 23:21:14 [密码错误]
+[INFO][publish.go:44]2024/04/09 23:21:27 [Bucket %s already exists
+ picture]
+[ERROR][comment.go:16]2024/04/09 23:33:20 [sql: Scan error on column index 0, name "MAX(comment_id)": converting NULL to int64 is unsupported]
+[INFO][favorite.go:48]2024/04/09 23:34:55 [redigo: nil returned]
+[INFO][favorite.go:48]2024/04/09 23:36:40 [redigo: nil returned]
+[INFO][publish.go:44]2024/04/09 23:41:43 [Bucket %s already exists
+ picture]
+[ERROR][comment.go:16]2024/04/09 23:41:52 [sql: Scan error on column index 0, name "MAX(comment_id)": converting NULL to int64 is unsupported]

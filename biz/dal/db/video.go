@@ -2,8 +2,12 @@ package db
 
 import (
 	"Hertz_refactored/biz/model/video"
+	"sync"
+
 	"github.com/sirupsen/logrus"
 )
+
+var wg sync.WaitGroup
 
 func Feedlist(lateTime string) ([]*video.Video, error) {
 	var videos []*video.Video
@@ -28,15 +32,24 @@ func Videolist(req video.VideoFeedListRequest) ([]*video.Video, int64, error) {
 func Videosearch(req video.VideoSearchRequest) ([]*video.Video, int64, error) {
 	var video2 []*video.Video
 	var count int64
+	var err error
 	if req.Keyword != "" {
-		if err := Db.Model(&video.Video{}).
-			Where("title like ?", "%"+req.Keyword+"%").
-			Or("publish_time<? &&publish_time>?", req.ToDate, req.FromDate).Count(&count).
-			Limit(int(req.PageSize)).Offset(int((req.PageNum - 1) * req.PageSize)).
-			Find(&video2).Error; err != nil {
-			logrus.Info(err)
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			if err = Db.Model(&video.Video{}).
+				Where("title like ? And publish_time<? &&publish_time>?", "%"+req.Keyword+"%", req.ToDate, req.FromDate).
+				Count(&count).
+				Limit(int(req.PageSize)).Offset(int((req.PageNum - 1) * req.PageSize)).
+				Find(&video2).Error; err != nil {
+				logrus.Info(err)
+
+			}
+		}()
+		if err != nil {
 			return video2, count, err
 		}
+		wg.Wait()
 	}
 	return video2, count, nil
 }

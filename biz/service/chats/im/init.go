@@ -1,16 +1,18 @@
 package im //nolint:gofmt
 
 import (
+	"Hertz_refactored/biz/dal/cache"
 	"Hertz_refactored/biz/dal/db"
 	"Hertz_refactored/biz/dal/db/mq"
 	"Hertz_refactored/biz/model/chat"
 	e "Hertz_refactored/biz/pkg"
 
 	"encoding/json"
-	"github.com/hertz-contrib/websocket"
-	"github.com/sirupsen/logrus"
 	"log"
 	"time"
+
+	"github.com/hertz-contrib/websocket"
+	"github.com/sirupsen/logrus"
 )
 
 func (manager *ClientManager) Listen() {
@@ -43,6 +45,8 @@ func (manager *ClientManager) Listen() {
 			close(client.Send)                 //close chan
 			delete(Manager.Clients, client.ID) //delete map
 		case broadcast := <-Manager.Broadcast:
+			key := "message_id"
+			Id := cache.GenerateID(key)
 			//ToDo:对这里进行完善
 			message := broadcast.Message
 			touid := broadcast.Client.ToUid
@@ -71,8 +75,12 @@ func (manager *ClientManager) Listen() {
 					Content: "对方在线应答",
 				}
 				msg, err := json.Marshal(replyMsg)
+				if err != nil {
+					logrus.Info(err)
+				}
 				_ = broadcast.Client.Socket.WriteMessage(websocket.TextMessage, msg)
 				messages := &chat.Message{
+					MessageID:   Id,
 					SenderID:    id,
 					ReceiverID:  touid,
 					MessageText: string(message),
@@ -90,8 +98,12 @@ func (manager *ClientManager) Listen() {
 					Content: "对方不在线",
 				}
 				msg, err := json.Marshal(replyMsg)
+				if err != nil {
+					logrus.Info(err)
+				}
 				_ = broadcast.Client.Socket.WriteMessage(websocket.TextMessage, msg)
 				messages := &chat.Message{
+					MessageID:   Id,
 					SenderID:    id,
 					ReceiverID:  touid,
 					MessageText: string(message),

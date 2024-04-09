@@ -34,12 +34,16 @@ func (s *FavoriteService) Favorite(req favorite.FavoriteRequest, uid int64) erro
 	//ToDo 如何实现使用redis将视频id与评论id相对应起来 例如对应着同一个视频id具有多条评论
 
 	var err error
-
+	key:="favorite_id"
+	Id:=cache.GenerateID(key)
 	videoId, err := cache.CacheGetCommentVideo(req.CommentId)
 	favorites := &favorite.Favorite{
+		FavoriteId: Id,
 		VideoId:   videoId,
 		UserId:    uid,
 		CommentId: req.CommentId,
+		VideoType: req.VideoType,
+		//这里的VideoType是一种标识，用于标记是否要去对视频进行点赞 如果为1，则表示要对该视频进行点赞 否则不对视频点赞
 	}
 	if err != nil {
 		logging.Info(err)

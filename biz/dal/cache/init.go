@@ -48,7 +48,6 @@ func Init() {
 				logrus.Error("conn redis failed,", err)
 				return nil, err
 			}
-
 			return c, err
 		},
 	}
@@ -63,6 +62,7 @@ func Init() {
 func GetRedis() redis.Conn {
 	return redisClient.Get()
 }
+
 func CloseRedis() {
 	err := redisClient.Close()
 	if err != nil {
@@ -75,9 +75,9 @@ func Exists(key string) bool {
 	defer func(conn redis.Conn) {
 		err := conn.Close()
 		if err != nil {
-
+			logrus.Info(err)
 		}
-	}(conn)
+		}(conn)	
 
 	exists, err := redis.Bool(conn.Do("EXISTS", key))
 	if err != nil {
@@ -86,6 +86,25 @@ func Exists(key string) bool {
 
 	return exists
 }
+
+//GenerateID
+
+func GenerateID(key string)int64{
+	conn:=redisClient.Get()
+	defer conn.Close()
+	
+	val,err:=redis.Int64(conn.Do("INCR",key))
+	if err!=nil{
+		logrus.Info(err)
+		return -1
+	}
+	return val
+}
+/*
+当多个进程或线程需要访问共享资源时，为了避免并发问题，我们通常会使用锁来保证在同一时刻只有一个进程或线程能够访问共享资源。
+假设我们有一个电商网站，用户可以在网站上购买商品。当一个商品的库存只剩下最后一件时，可能会有多个用户同时尝试购买这个商品。
+当一个用户尝试购买一个商品时，我们首先获取一个分布式锁。只有成功获取到锁的用户才能继续执行购买操作。这样可以确保在同一时刻，只有一个用户能够购买最后一件商品，从而避免了超卖的问题。
+*/
 
 func GetLock(key string) (*redsyncs.Mutex, error) {
 	mutex := rs.NewMutex(key+"_lock", option...)
@@ -111,7 +130,7 @@ func CacheSet(key string, data interface{}) error {
 	defer func(conn redis.Conn) {
 		err := conn.Close()
 		if err != nil {
-
+			logrus.Info(err)
 		}
 	}(conn)
 	value, err := json.Marshal(data)
@@ -119,6 +138,7 @@ func CacheSet(key string, data interface{}) error {
 		return err
 	}
 	_, err = conn.Do("SET", key, value, "EX", valueExpire)
+
 	/*
 		使用Redis的Set命令将序列化的数据存入Redis中
 		key：用作缓存键。
@@ -126,6 +146,7 @@ func CacheSet(key string, data interface{}) error {
 		"EX"：设置过期时间。
 		valueExpire：应该是一个在函数外部定义的变量，表示过期时间（秒）
 	*/
+
 	if err != nil {
 		logrus.Info("第二步出错")
 		return err
@@ -138,7 +159,7 @@ func CacheGet(key string) ([]byte, error) { //用于获取键
 	defer func(conn redis.Conn) {
 		err := conn.Close()
 		if err != nil {
-
+			logrus.Info(err)
 		}
 	}(conn)
 
@@ -162,25 +183,29 @@ func RangeAdd(value, id int64) error {
 	defer func(conn redis.Conn) {
 		err := conn.Close()
 		if err != nil {
-
+			logrus.Info(err)
 		}
 	}(conn)
-	_, err := conn.Do("ZADD", "Rank", value, id)
+	// ZADD racer_scores 10 "Norem"
+	//其中ZADD命令中 第一个为这个事务的名称 第二个是值(分数) 第三个是键(分数对应的对象)
+	_, err := conn.Do("ZADD", "Rank", value, id) 
 	if err != nil {
 		logging.Error(err)
 		return err
 	}
 	return nil
 }
-
+//To Get the RankList
 func RangeList(key string) ([]string, error) {
 	conn := redisClient.Get()
 	defer func(conn redis.Conn) {
 		err := conn.Close()
 		if err != nil {
-
+			logrus.Info(err)
 		}
 	}(conn)
+	//ZRANGE命令的排序顺序是从低到高的，而ZREVRANGE命令的顺序是从高到低的。	0和-1表示从元素索引为0到最后一个元素
+	//ZRANGE racer_scores 0 -1 withscores 这个命令代表的是不但会返回排序后的键 还会返回这个键也就是对象对应的值也就是分数
 	res, err := redis.Strings(conn.Do("ZRevRange", key, 0, -1))
 	if err != nil {
 		logging.Error(err)
@@ -238,7 +263,7 @@ func listPop(op, key string) ([]byte, error) {
 	defer func(conn redis.Conn) {
 		err := conn.Close()
 		if err != nil {
-
+			logrus.Info(err)
 		}
 	}(conn)
 
@@ -254,18 +279,20 @@ func listPop(op, key string) ([]byte, error) {
 
 func CacheHSet(key, mkey string, value ...interface{}) error {
 	conn := redisClient.Get()
+	//这是一个延迟执行的匿名函数。它接受一个 redis.Conn 类型的参数 conn，这个参数是 Redis 连接
 	defer func(conn redis.Conn) {
 		err := conn.Close()
 		if err != nil {
-
+			logrus.Info(err)
 		}
 	}(conn)
-
+	//value ...interface{} 表示 value 可以是任意数量、任意类型的参数。在函数内部，你可以像处理切片一样处理 value
 	for _, d := range value {
 		data, err := json.Marshal(d)
 		if err != nil {
 			return nil
 		}
+
 		//对该redis缓存的解释为:key是哈希表的名字，而mkey则是哈希表的键名
 		_, err = conn.Do("HSET", key, mkey, data)
 		if err != nil {
@@ -280,7 +307,7 @@ func CacheHGet(key, mkey string) ([]byte, error) {
 	defer func(conn redis.Conn) {
 		err := conn.Close()
 		if err != nil {
-
+			logrus.Info(err)
 		}
 	}(conn)
 
@@ -299,7 +326,7 @@ func CacheHGet2(key, mkey string) (string, error) {
 	defer func(conn redis.Conn) {
 		err := conn.Close()
 		if err != nil {
-
+			logrus.Info(err)
 		}
 	}(conn)
 
@@ -316,7 +343,7 @@ func CacheDelHash(key, mkey string) error {
 	defer func(conn redis.Conn) {
 		err := conn.Close()
 		if err != nil {
-
+			logrus.Info(err)
 		}
 	}(conn)
 
@@ -333,7 +360,7 @@ func CacheDelHash2(key, mkey, comment_id string) error {
 	defer func(conn redis.Conn) {
 		err := conn.Close()
 		if err != nil {
-
+			logrus.Info(err)
 		}
 	}(conn)
 
