@@ -31,16 +31,16 @@ func (s *RelationService) Following(req relation.RelationServiceRequest, id int6
 		if err := db.Follow(Relation); err != nil {
 			return err
 		}
-		go CacheChangeUserCount(id, add, "follower")
-		go CacheChangeUserCount(req.ToUserId, add, "follow")
+		go CacheChangeUserCount(id, add, "follow")
+		go CacheChangeUserCount(req.ToUserId, add, "follower")
 	} else {
 		if err := db.UnFollow(Relation); err != nil {
 			return err
 		}
 		//这个表示被关注操作
-		go CacheChangeUserCount(id, sub, "follower")
+		go CacheChangeUserCount(id, sub, "follow")
 		//这个表示为关注操作
-		go CacheChangeUserCount(req.ToUserId, sub, "follow")
+		go CacheChangeUserCount(req.ToUserId, sub, "follower")
 	}
 	return nil
 }
