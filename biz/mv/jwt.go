@@ -37,7 +37,12 @@ func InitJwt() {
 			if err := c.BindAndValidate(&loginRequest); err != nil {
 				return nil, err
 			}
+<<<<<<< HEAD
+		
+			users, err := user_service.NewUserService(ctx).VerifyUser(loginRequest.Username, loginRequest.Password)
+=======
 			users, err := user_service.CheckUser(loginRequest.Username, loginRequest.Password)
+>>>>>>> main
 			if err != nil {
 				c.JSON(http.StatusBadRequest, "登录失败")
 				logging.Error(err)

@@ -2,9 +2,17 @@ package db
 
 import (
 	"Hertz_refactored/biz/model/user"
+<<<<<<< HEAD
+	"Hertz_refactored/biz/pkg/logging"
+	"Hertz_refactored/biz/pkg/util"
+	"context"
+	"errors"
+
+=======
 	"Hertz_refactored/biz/pkg/errno"
 	"Hertz_refactored/biz/pkg/logging"
 	"context"
+>>>>>>> main
 	"github.com/sirupsen/logrus"
 )
 
@@ -51,6 +59,8 @@ func GetUser(userid int64) (*user.User, error) {
 	return users, nil
 }
 
+<<<<<<< HEAD
+=======
 func VerifyUser(ctx context.Context, users *user.User) error {
 	if err := Db.WithContext(ctx).Where("user_name=? AND password=?", users.UserName, users.Password).Error; err != nil {
 		panic(err)
@@ -63,6 +73,7 @@ func VerifyUser(ctx context.Context, users *user.User) error {
 	return nil
 }
 
+>>>>>>> main
 func CheckUserExistById(userId int64) (bool, error) {
 	var users user.User
 	if err := Db.Where("id=?", userId).Find(&users).Error; err != nil {
@@ -73,3 +84,15 @@ func CheckUserExistById(userId int64) (bool, error) {
 	}
 	return true, nil
 }
+<<<<<<< HEAD
+
+func CheckUser(account, password string) (user.User, error) {
+	var users user.User
+	Db.Model(&user.User{}).Where("user_name =?", account).Find(&users)
+	if flag := util.VerifyPassword(password, users.Password); flag == false {
+		return users, errors.New("密码错误")
+	}
+	return users, nil
+}
+=======
+>>>>>>> main
