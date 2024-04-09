@@ -33,7 +33,8 @@ struct Favorite{
 
 struct FavoriteRequest{
     1: i64    ActionType    (api.body="action_type", api.form="action_type",api.vd="($==0 ||$==1)")
-    2: i64    CommentId     (api.body="comment_id",api.form="comment_id")
+    2: i64    CommentId     (api.body="comment_id", api.form="comment_id")
+    3: i64    VideoType     (api.body="video_type", api.form="video_type")
 }
 
 struct FavoriteResponse{
