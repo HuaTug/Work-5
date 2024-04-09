@@ -31,9 +31,8 @@ func UploadFile(file *multipart.FileHeader, req publish.UpLoadVideoRequest, uid 
 		return err
 	}
 	bucketName := req.BucketName
-	objectName := req.ObjectName + "." + req.ContentType
 	var filePath string
-	fmt.Println(objectName)
+	var objectName string
 	wg.Add(2)
 	go func() {
 		defer wg.Done()
@@ -49,9 +48,11 @@ func UploadFile(file *multipart.FileHeader, req publish.UpLoadVideoRequest, uid 
 	}()
 	switch req.ContentType {
 	case "video/mp4":
-		filePath = "/home/xuzh/Videos" + file.Filename
+		filePath = "/home/xuzh/Videos/" + file.Filename
+		objectName=req.ObjectName+".mp4"
 	case "png","jpg","jpeg":
-		filePath="/home/xuzh/Pictures"+file.Filename
+		filePath="/home/xuzh/Pictures/"+file.Filename
+		objectName=req.ObjectName+".jpg"
 	}
 
 	fmt.Println(filePath)
@@ -61,7 +62,6 @@ func UploadFile(file *multipart.FileHeader, req publish.UpLoadVideoRequest, uid 
 		return err
 	}
 	defer src.Close()
-	wg.Add(1)
 	go func() {
 		_, err = minioClient.PutObject(context.Background(), bucketName, objectName, src, -1, minio.PutObjectOptions{})
 		if err != nil {
