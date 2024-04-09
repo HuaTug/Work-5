@@ -8,7 +8,6 @@ import (
 	"Hertz_refactored/biz/pkg/logging"
 	"context"
 	"fmt"
-<<<<<<< HEAD
 	"log"
 	"mime/multipart"
 	"os"
@@ -22,18 +21,6 @@ import (
 
 func UploadFile(file *multipart.FileHeader, req publish.UpLoadVideoRequest, uid int64) error {
 	var wg sync.WaitGroup
-=======
-	"github.com/minio/minio-go/v7"
-	"github.com/minio/minio-go/v7/pkg/credentials"
-	"github.com/sirupsen/logrus"
-	"log"
-	"mime/multipart"
-	"os"
-	"time"
-)
-
-func UploadFile(file *multipart.FileHeader, req publish.UpLoadVideoRequest, uid int64) error {
->>>>>>> main
 	accessKeyID := "minioadmin"
 	secretAccessKey := "minioadmin"
 	minioClient, err := minio.New("127.0.0.1:9000", &minio.Options{
@@ -44,7 +31,6 @@ func UploadFile(file *multipart.FileHeader, req publish.UpLoadVideoRequest, uid 
 		return err
 	}
 	bucketName := req.BucketName
-<<<<<<< HEAD
 	var filePath string
 	var objectName string
 	wg.Add(2)
@@ -69,22 +55,6 @@ func UploadFile(file *multipart.FileHeader, req publish.UpLoadVideoRequest, uid 
 		objectName=req.ObjectName+".jpg"
 	}
 
-=======
-	objectName := req.ObjectName + "." + req.ContentType
-	fmt.Println(objectName)
-
-	exists, err3 := minioClient.BucketExists(context.Background(), bucketName)
-	if err3 == nil && exists {
-		logging.Info("Bucket %s already exists\n", bucketName)
-	} else {
-		err = minioClient.MakeBucket(context.Background(), bucketName, minio.MakeBucketOptions{})
-		if err != nil {
-			log.Fatalln(err)
-		}
-	}
-
-	filePath := "C:\\Users\\0\\Downloads\\Video\\" + file.Filename
->>>>>>> main
 	fmt.Println(filePath)
 	src, err := os.Open(filePath)
 	if err != nil {
@@ -92,7 +62,6 @@ func UploadFile(file *multipart.FileHeader, req publish.UpLoadVideoRequest, uid 
 		return err
 	}
 	defer src.Close()
-<<<<<<< HEAD
 	go func() {
 		_, err = minioClient.PutObject(context.Background(), bucketName, objectName, src, -1, minio.PutObjectOptions{})
 		if err != nil {
@@ -101,13 +70,6 @@ func UploadFile(file *multipart.FileHeader, req publish.UpLoadVideoRequest, uid 
 		wg.Done()
 	}()
 	wg.Wait()
-=======
-	_, err = minioClient.PutObject(context.Background(), bucketName, objectName, src, -1, minio.PutObjectOptions{})
-	if err != nil {
-		logrus.Info(err)
-		return err
-	}
->>>>>>> main
 
 	publishs := video.Video{
 		PlayUrl:     filePath,

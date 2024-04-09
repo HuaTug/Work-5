@@ -2,15 +2,13 @@ package favorite
 
 import (
 	"context"
-<<<<<<< HEAD
 	"sync"
-=======
->>>>>>> main
 
 	"github.com/sirupsen/logrus"
 
 	"Hertz_refactored/biz/dal/cache"
 	"Hertz_refactored/biz/dal/db"
+
 	"Hertz_refactored/biz/model/favorite"
 	"Hertz_refactored/biz/model/user"
 	"Hertz_refactored/biz/pkg/logging"
@@ -22,11 +20,8 @@ const (
 	sub = int64(-1)
 )
 
-<<<<<<< HEAD
 var wg sync.WaitGroup
 
-=======
->>>>>>> main
 type FavoriteService struct {
 	ctx context.Context
 }
@@ -37,10 +32,9 @@ func NewFavoriteService(ctx context.Context) *FavoriteService {
 
 func (s *FavoriteService) Favorite(req favorite.FavoriteRequest, uid int64) error {
 	//ToDo 如何实现使用redis将视频id与评论id相对应起来 例如对应着同一个视频id具有多条评论
-<<<<<<< HEAD
+
 	var err error
-=======
->>>>>>> main
+
 	videoId, err := cache.CacheGetCommentVideo(req.CommentId)
 	favorites := &favorite.Favorite{
 		VideoId:   videoId,
@@ -57,7 +51,6 @@ func (s *FavoriteService) Favorite(req favorite.FavoriteRequest, uid int64) erro
 			errs := fmt.Sprintf("用户:%s,已经对这个视频点赞过", username)
 			return errors.New(errs)
 		}*/
-<<<<<<< HEAD
 	wg.Add(1)
 	go func() {
 		err = db.FavoriteAction(favorites)
@@ -67,27 +60,18 @@ func (s *FavoriteService) Favorite(req favorite.FavoriteRequest, uid int64) erro
 	}
 	wg.Wait()
 
-=======
-	if err := db.FavoriteAction(favorites); err != nil {
-		return err
-	}
->>>>>>> main
 	//ToDo:实现对视频的点赞缓存操作
 	go relation.CacheChangeUserCount(uid, add, "like")
 	return nil
 }
 
 func (s *FavoriteService) UnFavorite(req favorite.FavoriteRequest, userId int64) error {
-<<<<<<< HEAD
 	var err error
-=======
->>>>>>> main
 	VideoId, _ := cache.CacheGetCommentVideo(req.CommentId)
 	touid, err := cache.CacheGetAuthor(VideoId)
 	if err != nil {
 		logrus.Info(err)
 	}
-<<<<<<< HEAD
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
@@ -98,11 +82,6 @@ func (s *FavoriteService) UnFavorite(req favorite.FavoriteRequest, userId int64)
 		return err
 	}
 	wg.Wait()
-=======
-	if err := db.UnFavoriteAction(userId, VideoId); err != nil {
-		return err
-	}
->>>>>>> main
 	go relation.CacheChangeUserCount(touid, sub, "unlike")
 	return nil
 }
@@ -111,7 +90,6 @@ func (s *FavoriteService) UnFavorite(req favorite.FavoriteRequest, userId int64)
 func (s *FavoriteService) List(uid int64) (favorite.ListFavoriteResponse, error) {
 	var favs []*favorite.Favorite
 	var users []*favorite.User
-<<<<<<< HEAD
 	wg.Add(2)
 	go func() {
 		defer wg.Done()
@@ -123,10 +101,6 @@ func (s *FavoriteService) List(uid int64) (favorite.ListFavoriteResponse, error)
 	}()
 	wg.Wait()
 
-=======
-	db.Db.Model(&user.User{}).Where("user_id=?", uid).Find(&users)
-	db.Db.Model(&favorite.Favorite{}).Where("user_id=?", uid).Find(&favs)
->>>>>>> main
 	return Append(favs, users), nil
 }
 
