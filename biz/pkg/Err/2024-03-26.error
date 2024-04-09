@@ -1,0 +1,35 @@
+[ERROR][jwt.go:67]2024/03/26 02:29:27 [token contains an invalid number of segments]
+[INFO][publish.go:36]2024/03/26 15:15:06 [Bucket %s already exists
+ video]
+[INFO][publish.go:36]2024/03/26 15:15:24 [Bucket %s already exists
+ video]
+[ERROR][comment.go:28]2024/03/26 15:15:55 [Error 1364 (HY000): Field 'index_id' doesn't have a default value]
+[ERROR][comment.go:28]2024/03/26 15:16:13 [Error 1364 (HY000): Field 'index_id' doesn't have a default value]
+[ERROR][comment.go:40]2024/03/26 20:00:29 [Error 1364 (HY000): Field 'favorite_count' doesn't have a default value]
+[ERROR][comment.go:61]2024/03/26 20:07:05 [redigo: nil returned]
+[ERROR][comment.go:61]2024/03/26 20:08:21 [redigo: nil returned]
+[ERROR][comment.go:61]2024/03/26 20:08:39 [redigo: nil returned]
+[INFO][publish.go:36]2024/03/26 20:48:59 [Bucket %s already exists
+ video]
+[INFO][comment.go:36]2024/03/26 20:54:45 [新插入一条评论成功]
+[INFO][comment.go:36]2024/03/26 20:57:05 [新插入一条评论成功]
+[ERROR][favorite.go:37]2024/03/26 21:11:04 [redigo: nil returned]
+[ERROR][favorite.go:35]2024/03/26 21:32:28 [redigo: nil returned]
+[INFO][publish.go:36]2024/03/26 21:36:12 [Bucket %s already exists
+ video]
+[INFO][publish.go:36]2024/03/26 21:36:32 [Bucket %s already exists
+ video]
+[ERROR][jwt.go:67]2024/03/26 21:40:42 [user already exists or wrong password]
+[INFO][publish.go:36]2024/03/26 21:44:22 [Bucket %s already exists
+ video]
+[ERROR][jwt.go:67]2024/03/26 21:44:44 [token contains an invalid number of segments]
+[INFO][publish.go:36]2024/03/26 21:44:51 [Bucket %s already exists
+ video]
+[INFO][comment.go:35]2024/03/26 21:45:19 [新插入一条评论成功]
+[INFO][comment.go:35]2024/03/26 21:45:56 [新插入一条评论成功]
+[INFO][publish.go:36]2024/03/26 22:06:13 [Bucket %s already exists
+ video]
+[ERROR][comment.go:67]2024/03/26 23:48:51 [redigo: nil returned]
+[ERROR][comment.go:67]2024/03/26 23:49:37 [redigo: nil returned]
+[INFO][favorite.go:36]2024/03/26 23:50:28 [redigo: nil returned]
+[INFO][favorite.go:36]2024/03/26 23:52:24 [redigo: nil returned]

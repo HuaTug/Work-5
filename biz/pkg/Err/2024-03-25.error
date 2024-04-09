@@ -1,0 +1,12 @@
+[ERROR][jwt.go:67]2024/03/25 15:00:36 [form token is empty]
+[INFO][publish.go:72]2024/03/25 15:03:57 [Bucket %s already exists
+ picture]
+[INFO][publish.go:36]2024/03/25 15:05:54 [Bucket %s already exists
+ picture]
+[INFO][publish.go:36]2024/03/25 15:06:20 [Bucket %s already exists
+ picture]
+[ERROR][init.go:148]2024/03/25 21:17:46 [redigo: unexpected type for Bytes, got type []interface {}]
+[ERROR][init.go:159]2024/03/25 21:34:13 [redigo: unexpected type for Bytes, got type []interface {}]
+[ERROR][init.go:159]2024/03/25 21:41:03 [redigo: unexpected type for Bytes, got type []interface {}]
+[ERROR][init.go:159]2024/03/25 21:43:59 [redigo: unexpected type for Bytes, got type []interface {}]
+[ERROR][init.go:159]2024/03/25 21:44:31 [redigo: unexpected type for Bytes, got type []interface {}]

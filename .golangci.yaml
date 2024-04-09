@@ -1,0 +1,21 @@
+linters:
+  disable-all: true
+  enable:
+    - gocyclo         # 代码复杂度
+    - ineffassign     # 无效赋值
+    - errcheck        #检查在Go代码中是否有忽略错误的语句
+    - goconst
+    - gofmt #可以自动修正代码格式
+    - gosec #专门用来检查安全问题
+    - goimports #用于管理import语句
+    - unparam
+    - unused
+    - lll
+    - dupl
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+    check-blank: false #用于检测空白符是否被正确处理
+  funlen:
+    lines: 200
+    statements: 40

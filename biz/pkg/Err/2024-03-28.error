@@ -1,0 +1,4 @@
+[ERROR][init.go:157]2024/03/28 09:03:32 [redigo: unexpected type for Bytes, got type []interface {}]
+[ERROR][init.go:157]2024/03/28 09:13:37 [redigo: unexpected type for Bytes, got type []interface {}]
+[ERROR][init.go:157]2024/03/28 09:14:38 [redigo: unexpected type for String, got type []interface {}]
+[ERROR][comment.go:73]2024/03/28 16:54:59 [redigo: nil returned]

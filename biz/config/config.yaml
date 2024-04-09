@@ -1,0 +1,17 @@
+mysql:
+  addr: localhost:3306
+  username: root
+  password: root
+  charset: utf8mb4
+  database: Hertz
+
+redis:
+  addr: localhost:6379
+
+rabbitmq:
+  addr: localhost:5672
+  username: guest
+  password: guest
+mongodb:
+  addr: localhost:27017
+  database: IM
