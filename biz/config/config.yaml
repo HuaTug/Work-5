@@ -1,17 +1,17 @@
 mysql:
-  addr: localhost:3306
+  addr: 192.168.17.128:3306
   username: root
   password: root
   charset: utf8mb4
   database: Hertz
 
 redis:
-  addr: localhost:6379
+  addr: 192.168.17.128:6379
 
 rabbitmq:
-  addr: localhost:5672
+  addr: 192.168.17.128:5672
   username: guest
   password: guest
 mongodb:
-  addr: localhost:27017
+  addr: 192.168.17.128:27017
   database: IM

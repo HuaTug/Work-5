@@ -1,4 +1,4 @@
-
+CREATE DATABASE Hertz;
 use Hertz;
 
 SET NAMES utf8mb4;
@@ -33,10 +33,7 @@ CREATE TABLE `favorites`  (
                               `user_id` bigint NOT NULL,
                               `video_id` bigint NOT NULL,
                               `comment_id` bigint NOT NULL default 0,
-<<<<<<< HEAD
-                              `video_type` bigint NOT NULL ,
-=======
->>>>>>> main
+                              `video_type` bigint NOT NULL,
                               PRIMARY KEY (`favorite_id`) USING BTREE,
                               INDEX `favoriteUser`(`user_id`) USING BTREE,
                               INDEX `favoriteVideo`(`video_id`) USING BTREE
@@ -121,11 +118,7 @@ delimiter ;
 -- ----------------------------
 DROP TRIGGER IF EXISTS `like_action`;
 delimiter ;;
-<<<<<<< HEAD
 CREATE TRIGGER `like_action` AFTER INSERT ON `favorites` FOR EACH ROW update videos set favorite_count = favorite_count + 1 where videos.video_id = new.video_id and new.video_type=1
-=======
-CREATE TRIGGER `like_action` AFTER INSERT ON `favorites` FOR EACH ROW update videos set favorite_count = favorite_count + 1 where videos.video_id = new.video_id
->>>>>>> main
 ;;
 delimiter ;
 

@@ -2,45 +2,53 @@ version: '3'
 
 services:
   mysql:
-    image: mysql:${MYSQL_VERSION}
+    image: mysql:latest
     container_name: hertz_mysql
     volumes:
-      - ./biz/config/mysql.sql:/docker-entrypoint-initdb.d
-      - ./biz/pkg/data/sql:/var/lib/mysql
+      - ./biz/config/mysql/:/docker-entrypoint-initdb.d/
     ports:
-      - ${MYSQL_PORT}:3306
+      - "3306:3306"
     privileged: true
     environment:
       - MYSQL_DATABASE=hertz
-      - MYSQL_USER=${MYSQL_USERNAME}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=root
     networks:
       - docker_net
 
   redis:
-    image: redis:6
+    image: redis:latest
     container_name: hertz_redis
     ports:
-      - ${REDIS_PORT}:6379
+      - "6379:6379"
     volumes:
-      - ./biz/pkg/data/redis/:/data
+      - ./biz/dal/cache/redis/redis.conf:/usr/local/etc/redis/redis.conf  
     command: redis-server /usr/local/etc/redis/redis.conf
     networks:
       - docker_net
 
   rabbitmq:
     image: rabbitmq:3.8.5-management
-    container_name: rabbitmq
+    container_name: rabbitmq_test
     ports:
-      - ${RABBIT_MQ_PORT}:5672
-      - ${RABBIT_MQ_M_PORT}:15672
+      - "5672:5672"
+      - "15672:15672"
     environment:
-      - TZ=${RABBIT_MQ_TZ}
-      - RABBITMQ_DEFAULT_USER=${RABBIT_MQ_USER}
-      - RABBITMQ_DEFAULT_PASS=${RABBIT_MQ_PASS}
-    volumes:
-      - ./biz/pkg/data/rabbitmq:/var/lib/rabbitmq
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    networks:
+      - docker_net
+
+  work:
+    image: work:latest
+    container_name: work_main
+    depends_on:
+      - mysql
+      - redis
+      - rabbitmq
+    profiles: 
+    - release
+    ports:
+      - 8000:8888
     networks:
       - docker_net
 
