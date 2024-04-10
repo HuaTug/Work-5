@@ -14,5 +14,8 @@ RUN go build -o test
 
 FROM alpine:latest
 COPY --from=builder /go/src/test /app/
+COPY /biz/config/config.yaml /app/biz/config/
 WORKDIR /app
+RUN chmod +x /app
+
 CMD [ "./test" ]
