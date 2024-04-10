@@ -1,0 +1,3 @@
+[INFO][publish.go:44]2024/04/10 00:30:16 [Bucket %s already exists
+ picture]
+[ERROR][comment.go:16]2024/04/10 00:30:32 [sql: Scan error on column index 0, name "MAX(comment_id)": converting NULL to int64 is unsupported]
