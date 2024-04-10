@@ -1,0 +1,1 @@
+docker build -t hertz -f ./docker-build/dockerfile .
