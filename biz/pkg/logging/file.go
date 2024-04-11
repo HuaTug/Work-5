@@ -14,7 +14,7 @@ var (
 )
 
 func getLogFilePath() string {
-	return fmt.Sprintf("%s", LogSavePath)
+	return LogSavePath
 }
 
 func getLogFileFullPath() string {
