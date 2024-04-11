@@ -41,7 +41,7 @@ func UploadFile(file *multipart.FileHeader, req publish.UpLoadVideoRequest, uid 
 		defer wg.Done()
 		exists, err3 := minioClient.BucketExists(context.Background(), bucketName)
 		if err3 == nil && exists {
-			logging.Info("Bucket %s already exists\n", bucketName)
+			logrus.Printf("Bucket %s already exists\n", bucketName)
 		} else {
 			err = minioClient.MakeBucket(context.Background(), bucketName, minio.MakeBucketOptions{})
 			if err != nil {
