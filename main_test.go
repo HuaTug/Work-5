@@ -15,7 +15,6 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/test/assert"
 	"github.com/cloudwego/hertz/pkg/common/ut"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
-	"github.com/golang-jwt/jwt/v4"
 )
 
 func hInit() *server.Hertz {
@@ -48,7 +47,7 @@ func TestUserRegister(t *testing.T) {
 
 func TestUserInfo(t *testing.T) {
 	h := hInit()
-	token:=utils.Test_Token()
+	token := utils.Test_Token()
 	// 将 token 放置在 form 表单数据中
 	formData := url.Values{}
 	formData.Set("token", token)
@@ -70,7 +69,7 @@ func TestUserInfo(t *testing.T) {
 
 func TestUpdateUser(t *testing.T) {
 	h := hInit()
-	token:=utils.Test_Token()
+	token := utils.Test_Token()
 	// 将 token 放置在 form 表单数据中
 	formData := url.Values{}
 	formData.Set("token", token)
@@ -91,7 +90,7 @@ func TestUpdateUser(t *testing.T) {
 
 func TestDeleteUser(t *testing.T) {
 	h := hInit()
-	token:=utils.Test_Token()
+	token := utils.Test_Token()
 	// 将 token 放置在 form 表单数据中
 	formData := url.Values{}
 	formData.Set("token", token)
@@ -135,7 +134,7 @@ func TestVideoFee(t *testing.T) {
 
 func TestListVide(t *testing.T) {
 	h := hInit()
-	token:=utils.Test_Token()
+	token := utils.Test_Token()
 	// 将 token 放置在 form 表单数据中
 	formData := url.Values{}
 	formData.Set("token", token)
@@ -245,7 +244,7 @@ func TestVideoSea(t *testing.T) {
 
 func TestCommentCreate(t *testing.T) {
 	h := hInit()
-	token:=utils.Test_Token()
+	token := utils.Test_Token()
 	// 将 token 放置在 form 表单数据中
 	formData := url.Values{}
 	formData.Set("token", token)
@@ -266,7 +265,7 @@ func TestCommentCreate(t *testing.T) {
 
 func TestFollow(t *testing.T) {
 	h := hInit()
-	token:=utils.Test_Token()
+	token := utils.Test_Token()
 	// 将 token 放置在 form 表单数据中
 	formData := url.Values{}
 	formData.Set("token", token)
@@ -287,7 +286,7 @@ func TestFollow(t *testing.T) {
 
 func TestFavorite(t *testing.T) {
 	h := hInit()
-	token:=utils.Test_Token()
+	token := utils.Test_Token()
 	// 将 token 放置在 form 表单数据中
 	formData := url.Values{}
 	formData.Set("token", token)
