@@ -1,0 +1,5 @@
+[INFO][publish.go:44]2024/04/11 08:35:36 [Bucket %s already exists
+ picture]
+[INFO][publish.go:44]2024/04/11 08:36:07 [Bucket %s already exists
+ picture]
+[ERROR][jwt.go:81]2024/04/11 09:35:17 [Token is expired]
