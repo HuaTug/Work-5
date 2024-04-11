@@ -55,17 +55,22 @@ func (s *FavoriteService) Favorite(req favorite.FavoriteRequest, uid int64) erro
 			errs := fmt.Sprintf("用户:%s,已经对这个视频点赞过", username)
 			return errors.New(errs)
 		}*/
-	wg.Add(1)
+	errChan:=make(chan error,2)
+	wg.Add(2)
 	go func() {
-		err = db.FavoriteAction(favorites)
+		defer wg.Done()
+		err = db.FavoriteAction(favorites)	
+		errChan<-err
 	}()
-	if err != nil {
+	//ToDo:实现对视频的点赞缓存操作
+	go func(){
+		defer wg.Done()
+		relation.CacheChangeUserCount(uid, add, "like")
+	}()
+	wg.Wait()
+	if err,ok:=<-errChan;ok{
 		return err
 	}
-	wg.Wait()
-
-	//ToDo:实现对视频的点赞缓存操作
-	go relation.CacheChangeUserCount(uid, add, "like")
 	return nil
 }
 
@@ -85,8 +90,12 @@ func (s *FavoriteService) UnFavorite(req favorite.FavoriteRequest, userId int64)
 		logrus.Info(err)
 		return err
 	}
+	wg.Add(1)
+	go func(){
+		defer wg.Done()
+		relation.CacheChangeUserCount(touid, sub, "unlike")
+	}()
 	wg.Wait()
-	go relation.CacheChangeUserCount(touid, sub, "unlike")
 	return nil
 }
 

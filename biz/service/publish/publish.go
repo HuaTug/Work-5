@@ -26,7 +26,7 @@ func UploadFile(file *multipart.FileHeader, req publish.UpLoadVideoRequest, uid 
 	Id := cache.GenerateID(key)
 	accessKeyID := "minioadmin"
 	secretAccessKey := "minioadmin"
-	minioClient, err := minio.New("127.0.0.1:9000", &minio.Options{
+	minioClient, err := minio.New("localhost:9000", &minio.Options{
 		Creds: credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
 	})
 	if err != nil {

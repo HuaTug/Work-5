@@ -37,6 +37,7 @@ func FavoriteService(ctx context.Context, c *app.RequestContext) {
 		resp.Code = consts.StatusOK
 		resp.Msg = "点赞成功"
 		c.JSON(consts.StatusOK, resp)
+		return
 	} else {
 		if err := s.UnFavorite(req, userId); err != nil {
 			logrus.Info(err)
@@ -44,8 +45,8 @@ func FavoriteService(ctx context.Context, c *app.RequestContext) {
 		resp.Code = consts.StatusOK
 		resp.Msg = "取消点赞成功"
 		c.JSON(consts.StatusOK, resp)
+		return
 	}
-
 }
 
 // ListFavorite .
@@ -68,8 +69,10 @@ func ListFavorite(ctx context.Context, c *app.RequestContext) {
 		resp.Code = consts.StatusBadRequest
 		resp.Msg = "展示列表失败"
 		c.JSON(consts.StatusBadRequest, resp)
+		return
 	}
 	resp.Code = consts.StatusOK
 	resp.Msg = "成功展示列表"
 	c.JSON(consts.StatusOK, fav)
+	return
 }
