@@ -77,7 +77,7 @@ func Exists(key string) bool {
 		if err != nil {
 			logrus.Info(err)
 		}
-		}(conn)	
+	}(conn)
 
 	exists, err := redis.Bool(conn.Do("EXISTS", key))
 	if err != nil {
@@ -89,17 +89,18 @@ func Exists(key string) bool {
 
 //GenerateID
 
-func GenerateID(key string)int64{
-	conn:=redisClient.Get()
+func GenerateID(key string) int64 {
+	conn := redisClient.Get()
 	defer conn.Close()
-	
-	val,err:=redis.Int64(conn.Do("INCR",key))
-	if err!=nil{
+
+	val, err := redis.Int64(conn.Do("INCR", key))
+	if err != nil {
 		logrus.Info(err)
 		return -1
 	}
 	return val
 }
+
 /*
 当多个进程或线程需要访问共享资源时，为了避免并发问题，我们通常会使用锁来保证在同一时刻只有一个进程或线程能够访问共享资源。
 假设我们有一个电商网站，用户可以在网站上购买商品。当一个商品的库存只剩下最后一件时，可能会有多个用户同时尝试购买这个商品。
@@ -188,14 +189,15 @@ func RangeAdd(value, id int64) error {
 	}(conn)
 	// ZADD racer_scores 10 "Norem"
 	//其中ZADD命令中 第一个为这个事务的名称 第二个是值(分数) 第三个是键(分数对应的对象)
-	_, err := conn.Do("ZADD", "Rank", value, id) 
+	_, err := conn.Do("ZADD", "Rank", value, id)
 	if err != nil {
 		logging.Error(err)
 		return err
 	}
 	return nil
 }
-//To Get the RankList
+
+// To Get the RankList
 func RangeList(key string) ([]string, error) {
 	conn := redisClient.Get()
 	defer func(conn redis.Conn) {

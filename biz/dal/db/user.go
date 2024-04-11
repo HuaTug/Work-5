@@ -6,17 +6,18 @@ import (
 	"Hertz_refactored/biz/pkg/util"
 	"context"
 	"errors"
+
 	"github.com/sirupsen/logrus"
 )
 
 // ToDo 完成规范形式的三层架构模式
-func CreateUser(ctx context.Context, users *user.User) (*user.User, error,bool) {
+func CreateUser(ctx context.Context, users *user.User) (*user.User, error, bool) {
 	err := Db.WithContext(ctx).Create(&users).Error
 	if err != nil {
 		logging.Error(err)
-		return nil, err,true
+		return nil, err, true
 	}
-	return users, err,true
+	return users, err, true
 }
 
 func DeleteUser(userId int64) error {
@@ -52,7 +53,6 @@ func GetUser(userid int64) (*user.User, error) {
 	return users, nil
 }
 
-
 func CheckUserExistById(userId int64) (bool, error) {
 	var users user.User
 	if err := Db.Where("id=?", userId).Find(&users).Error; err != nil {
@@ -64,17 +64,16 @@ func CheckUserExistById(userId int64) (bool, error) {
 	return true, nil
 }
 
-func CheckUser(account, password string) (user.User, error,bool) {
+func CheckUser(account, password string) (user.User, error, bool) {
 	var users user.User
 	var count int64
 	Db.Model(&user.User{}).Where("user_name =?", account).Count(&count).Find(&users)
-	if count==0{
+	if count == 0 {
 		logrus.Info("正在创建新用户")
-		return users,nil,true
+		return users, nil, true
 	}
 	if flag := util.VerifyPassword(password, users.Password); flag == false {
-		return users, errors.New("密码错误"),true
+		return users, errors.New("密码错误"), true
 	}
-	return users, nil,false
+	return users, nil, false
 }
-

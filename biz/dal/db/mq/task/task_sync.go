@@ -54,10 +54,6 @@ var Manager = ClientManager{
 	Leave:     make(chan *Client),
 }
 
-type CommentQueueStruct struct {
-	dataChan chan comment.Comment
-	msgChan  chan []byte
-}
 type SyncTask struct {
 }
 

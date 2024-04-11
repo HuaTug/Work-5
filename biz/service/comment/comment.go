@@ -21,9 +21,7 @@ type CommentService struct {
 	ctx context.Context
 }
 
-
 var wg sync.WaitGroup
-
 
 func NewCommentService(ctx context.Context) *CommentService {
 	return &CommentService{ctx: ctx}
@@ -36,15 +34,15 @@ func SendComment(data *comment.Comment) error {
 	return mq.SendMessageMQ(msg)
 }
 func (s *CommentService) Create(req comment.CreateCommentRequest, userId int64) error {
-	key:="comment_id"
-	Id:=cache.GenerateID(key)
+	key := "comment_id"
+	Id := cache.GenerateID(key)
 	comments := &comment.Comment{
 		CommentId: Id,
-		VideoId: req.VideoId,
-		Comment: req.Comment,
-		UserId:  userId,
-		Time:    time.Now().Format(time.DateTime),
-		IndexId: req.IndexId,
+		VideoId:   req.VideoId,
+		Comment:   req.Comment,
+		UserId:    userId,
+		Time:      time.Now().Format(time.DateTime),
+		IndexId:   req.IndexId,
 	}
 	if req.ActionType == 1 && req.IndexId != 0 { //表示为非一级评论
 		if flag := db.Exist(req); flag == false {
@@ -66,7 +64,7 @@ func (s *CommentService) Create(req comment.CreateCommentRequest, userId int64) 
 			return err
 		}
 	}
-	commentId := db.GetMaxId()+1
+	commentId := db.GetMaxId() + 1
 	go func() {
 		err := cache.CacheSetCommentVideo(req.VideoId, commentId)
 		if err != nil {
@@ -77,7 +75,6 @@ func (s *CommentService) Create(req comment.CreateCommentRequest, userId int64) 
 }
 
 func (s *CommentService) Delete(req comment.CommentDeleteRequest) error {
-
 
 	wg.Add(1)
 	var err error
@@ -102,9 +99,9 @@ func (s *CommentService) List(req comment.ListCommentRequest) ([]*comment.Commen
 	comments, err = cache.CacheGetListComment(req.VideoId)
 	if err != nil {
 		logging.Error(err)
-		
-	}else{
-		return comments,total,err
+
+	} else {
+		return comments, total, err
 
 	}
 	comments, total, err = db.ListComment(req)

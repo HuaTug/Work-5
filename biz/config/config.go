@@ -2,6 +2,7 @@ package config //nolint:gofmt
 
 import (
 	"Hertz_refactored/biz/pkg/logging"
+
 	"github.com/spf13/viper"
 )
 

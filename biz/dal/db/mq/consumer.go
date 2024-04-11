@@ -15,6 +15,6 @@ func ConsumeMessage(ctx context.Context, queueName string) (<-chan amqp.Delivery
 		logrus.Info(err)
 	}
 	q, _ := ch.QueueDeclare(queueName, true, false, false, false, nil)
-	err = ch.Qos(1, 0, false)
+	_ = ch.Qos(1, 0, false)
 	return ch.Consume(q.Name, "", false, false, false, false, nil)
 }
