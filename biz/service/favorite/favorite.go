@@ -34,15 +34,15 @@ func (s *FavoriteService) Favorite(req favorite.FavoriteRequest, uid int64) erro
 	//ToDo 如何实现使用redis将视频id与评论id相对应起来 例如对应着同一个视频id具有多条评论
 
 	var err error
-	key:="favorite_id"
-	Id:=cache.GenerateID(key)
+	key := "favorite_id"
+	Id := cache.GenerateID(key)
 	videoId, err := cache.CacheGetCommentVideo(req.CommentId)
 	favorites := &favorite.Favorite{
 		FavoriteId: Id,
-		VideoId:   videoId,
-		UserId:    uid,
-		CommentId: req.CommentId,
-		VideoType: req.VideoType,
+		VideoId:    videoId,
+		UserId:     uid,
+		CommentId:  req.CommentId,
+		VideoType:  req.VideoType,
 		//这里的VideoType是一种标识，用于标记是否要去对视频进行点赞 如果为1，则表示要对该视频进行点赞 否则不对视频点赞
 	}
 	if err != nil {
@@ -55,20 +55,20 @@ func (s *FavoriteService) Favorite(req favorite.FavoriteRequest, uid int64) erro
 			errs := fmt.Sprintf("用户:%s,已经对这个视频点赞过", username)
 			return errors.New(errs)
 		}*/
-	errChan:=make(chan error,2)
+	errChan := make(chan error, 2)
 	wg.Add(2)
 	go func() {
 		defer wg.Done()
-		err = db.FavoriteAction(favorites)	
-		errChan<-err
+		err = db.FavoriteAction(favorites)
+		errChan <- err
 	}()
 	//ToDo:实现对视频的点赞缓存操作
-	go func(){
+	go func() {
 		defer wg.Done()
 		relation.CacheChangeUserCount(uid, add, "like")
 	}()
 	wg.Wait()
-	if err,ok:=<-errChan;ok{
+	if err, ok := <-errChan; ok {
 		return err
 	}
 	return nil
@@ -91,7 +91,7 @@ func (s *FavoriteService) UnFavorite(req favorite.FavoriteRequest, userId int64)
 		return err
 	}
 	wg.Add(1)
-	go func(){
+	go func() {
 		defer wg.Done()
 		relation.CacheChangeUserCount(touid, sub, "unlike")
 	}()

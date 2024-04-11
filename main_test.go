@@ -6,13 +6,16 @@ import (
 	"Hertz_refactored/biz/dal/db"
 	"Hertz_refactored/biz/dal/db/mq/script"
 	"Hertz_refactored/biz/mv"
+	"Hertz_refactored/biz/pkg/utils"
 	"bytes"
+	"net/url"
+	"testing"
+
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/test/assert"
 	"github.com/cloudwego/hertz/pkg/common/ut"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
-	"net/url"
-	"testing"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 func hInit() *server.Hertz {
@@ -40,11 +43,12 @@ func TestUserRegister(t *testing.T) {
 	ut.PerformRequest(h.Engine, "POST", "v1/user/create", &ut.Body{Body: bytes.NewBufferString(req), Len: len(req)},
 		header,
 	)
+	t.Log("Success")
 }
 
 func TestUserInfo(t *testing.T) {
 	h := hInit()
-	token := `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTQyMzUzNTAsIm9yaWdfaWF0IjoxNzExNjQzMzUwLCJ1c2VyX2lkIjoxfQ.XrBNo1vlHduekRoWHJplMCoZVm2K5Jldd2EwpzW9qqQ`
+	token:=utils.Test_Token()
 	// 将 token 放置在 form 表单数据中
 	formData := url.Values{}
 	formData.Set("token", token)
@@ -66,7 +70,7 @@ func TestUserInfo(t *testing.T) {
 
 func TestUpdateUser(t *testing.T) {
 	h := hInit()
-	token := `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTQyMzUzNTAsIm9yaWdfaWF0IjoxNzExNjQzMzUwLCJ1c2VyX2lkIjoxfQ.XrBNo1vlHduekRoWHJplMCoZVm2K5Jldd2EwpzW9qqQ`
+	token:=utils.Test_Token()
 	// 将 token 放置在 form 表单数据中
 	formData := url.Values{}
 	formData.Set("token", token)
@@ -87,7 +91,7 @@ func TestUpdateUser(t *testing.T) {
 
 func TestDeleteUser(t *testing.T) {
 	h := hInit()
-	token := `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTQyMzUzNTAsIm9yaWdfaWF0IjoxNzExNjQzMzUwLCJ1c2VyX2lkIjoxfQ.XrBNo1vlHduekRoWHJplMCoZVm2K5Jldd2EwpzW9qqQ`
+	token:=utils.Test_Token()
 	// 将 token 放置在 form 表单数据中
 	formData := url.Values{}
 	formData.Set("token", token)
@@ -109,7 +113,6 @@ func TestDeleteUser(t *testing.T) {
 
 func TestVideoFee(t *testing.T) {
 	h := hInit()
-	//token := `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTQyMzUzNTAsIm9yaWdfaWF0IjoxNzExNjQzMzUwLCJ1c2VyX2lkIjoxfQ.XrBNo1vlHduekRoWHJplMCoZVm2K5Jldd2EwpzW9qqQ`
 	// 将 token 放置在 form 表单数据中
 	lastime := "2024-03-28 13:12"
 	formData := url.Values{}
@@ -132,7 +135,7 @@ func TestVideoFee(t *testing.T) {
 
 func TestListVide(t *testing.T) {
 	h := hInit()
-	token := `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTQyMzUzNTAsIm9yaWdfaWF0IjoxNzExNjQzMzUwLCJ1c2VyX2lkIjoxfQ.XrBNo1vlHduekRoWHJplMCoZVm2K5Jldd2EwpzW9qqQ`
+	token:=utils.Test_Token()
 	// 将 token 放置在 form 表单数据中
 	formData := url.Values{}
 	formData.Set("token", token)
@@ -153,7 +156,7 @@ func TestListVide(t *testing.T) {
 
 func TestFeedList(t *testing.T) {
 	h := hInit()
-	// token := `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTQyMzUzNTAsIm9yaWdfaWF0IjoxNzExNjQzMzUwLCJ1c2VyX2lkIjoxfQ.XrBNo1vlHduekRoWHJplMCoZVm2K5Jldd2EwpzW9qqQ`
+
 	// 将 token 放置在 form 表单数据中
 	pagenum := "1"
 	pagesize := "5"
@@ -213,7 +216,6 @@ func BenchmarkVideoSearch(b *testing.B) {
 
 func TestVideoSea(t *testing.T) {
 	h := hInit()
-	// token := `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTQyMzUzNTAsIm9yaWdfaWF0IjoxNzExNjQzMzUwLCJ1c2VyX2lkIjoxfQ.XrBNo1vlHduekRoWHJplMCoZVm2K5Jldd2EwpzW9qqQ`
 	// 将 token 放置在 form 表单数据中
 	pagenum := "1"
 	fromdate := "2024-03-16 13:39"
@@ -243,7 +245,7 @@ func TestVideoSea(t *testing.T) {
 
 func TestCommentCreate(t *testing.T) {
 	h := hInit()
-	token := `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTQyMzUzNTAsIm9yaWdfaWF0IjoxNzExNjQzMzUwLCJ1c2VyX2lkIjoxfQ.XrBNo1vlHduekRoWHJplMCoZVm2K5Jldd2EwpzW9qqQ`
+	token:=utils.Test_Token()
 	// 将 token 放置在 form 表单数据中
 	formData := url.Values{}
 	formData.Set("token", token)
@@ -264,7 +266,7 @@ func TestCommentCreate(t *testing.T) {
 
 func TestFollow(t *testing.T) {
 	h := hInit()
-	token := `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTQyMzUzNTAsIm9yaWdfaWF0IjoxNzExNjQzMzUwLCJ1c2VyX2lkIjoxfQ.XrBNo1vlHduekRoWHJplMCoZVm2K5Jldd2EwpzW9qqQ`
+	token:=utils.Test_Token()
 	// 将 token 放置在 form 表单数据中
 	formData := url.Values{}
 	formData.Set("token", token)
@@ -285,7 +287,7 @@ func TestFollow(t *testing.T) {
 
 func TestFavorite(t *testing.T) {
 	h := hInit()
-	token := `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTQyMzUzNTAsIm9yaWdfaWF0IjoxNzExNjQzMzUwLCJ1c2VyX2lkIjoxfQ.XrBNo1vlHduekRoWHJplMCoZVm2K5Jldd2EwpzW9qqQ`
+	token:=utils.Test_Token()
 	// 将 token 放置在 form 表单数据中
 	formData := url.Values{}
 	formData.Set("token", token)

@@ -26,29 +26,29 @@ func NewUserService(ctx context.Context) *UserService {
 	return &UserService{ctx: ctx}
 }
 
-func (s *UserService) CreateUser(req user.CreateUserRequest, ctx context.Context) (*user.User, error,bool) {
-	var err error	
+func (s *UserService) CreateUser(req user.CreateUserRequest, ctx context.Context) (*user.User, error, bool) {
+	var err error
 	var flag bool
-	key:="user_id"
+	key := "user_id"
 	wg.Add(1)
 	go func() {
 		//防止用户重复注册
 		defer wg.Done()
-		if _, err ,flag= NewUserService(ctx).VerifyUser(req.Name, req.Password); flag == false {
+		if _, err, flag = NewUserService(ctx).VerifyUser(req.Name, req.Password); flag == false {
 			logrus.Info("用户重复注册")
 		}
 	}()
-	
-	wg.Wait()	
+
+	wg.Wait()
 	if !flag {
-		return nil, err,flag
+		return nil, err, flag
 	}
 	//使用Redis生成全局主键
-	id:=cache.GenerateID(key)
+	id := cache.GenerateID(key)
 
 	password, _ := util.Crypt(req.Password)
 	User := &user.User{
-		UserID: id,
+		UserID:   id,
 		UserName: req.Name,
 		Password: password,
 	}
@@ -64,15 +64,15 @@ func (s *UserService) LoginUser(req user.LoginUserResquest) (err error) {
 
 // ToDo:这是对JWT 登录认证时候的检验 通过这种切片的方式完成
 
-func (s *UserService) VerifyUser(account, password string) (user.User, error,bool) {
+func (s *UserService) VerifyUser(account, password string) (user.User, error, bool) {
 	var users user.User
 	var err error
-	flag:=true
-	if users, err,flag = db.CheckUser(account, password); err != nil {
+	var flag bool
+	if users, err, flag = db.CheckUser(account, password); err != nil {
 		logrus.Info(err)
-		return users, err,flag
+		return users, err, flag
 	}
-	return users, nil,flag
+	return users, nil, flag
 
 }
 

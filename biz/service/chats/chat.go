@@ -4,9 +4,10 @@ import (
 	"Hertz_refactored/biz/model/chat"
 	chats "Hertz_refactored/biz/service/chats/im"
 	"context"
+	"log"
+
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/hertz-contrib/websocket"
-	"log"
 )
 
 type ChatService struct {

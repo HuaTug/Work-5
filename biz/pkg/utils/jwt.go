@@ -78,3 +78,8 @@ func ParseRefreshToken(aToken, rToken string) (newAToken, newRToken string,
 	return "", "", errors.New("身份过期，请重新登陆")
 
 }
+
+func Test_Token() string {
+	Token := `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTQyMzUzNTAsIm9yaWdfaWF0IjoxNzExNjQzMzUwLCJ1c2VyX2lkIjoxfQ.XrBNo1vlHduekRoWHJplMCoZVm2K5Jldd2EwpzW9qqQ`
+	return Token
+}

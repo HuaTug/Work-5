@@ -90,14 +90,14 @@ func CreateUser(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 	resp := new(user.CreateUserResponse)
-	userResp, err ,flag:= user_service.NewUserService(ctx).CreateUser(req,ctx)
-	if err==nil&&!flag{
+	userResp, err, flag := user_service.NewUserService(ctx).CreateUser(req, ctx)
+	if err == nil && !flag {
 		resp.Code = consts.StatusBadRequest
-		resp.Msg ="用户重复注册"
-		c.JSON(consts.StatusBadRequest,resp)
-		return 
+		resp.Msg = "用户重复注册"
+		c.JSON(consts.StatusBadRequest, resp)
+		return
 	}
-	c.JSON(consts.StatusOK, user.CreateUserResponse{Code:consts.StatusOK,Msg:"创建用户成功",User: userResp})
+	c.JSON(consts.StatusOK, user.CreateUserResponse{Code: consts.StatusOK, Msg: "创建用户成功", User: userResp})
 }
 
 // LoginUser .
