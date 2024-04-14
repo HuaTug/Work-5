@@ -19,3 +19,8 @@ WORKDIR /app
 RUN chmod +x /app
 
 CMD [ "./test" ]
+
+
+#由于没有使用workdir去指定目录 所以当dockerfile在使用目录的时候便会将这个目录作为临时目录 用于存储程序 等docker构建完毕 则会消失 不会在docker容器内创建目录
+#RUN chmod +x /app：这是一个RUN指令，它会在Docker镜像构建过程中运行chmod +x /app命令。chmod +x是一个Linux命令，用于改变文件的权限。+x表示添加执行（x）权限。所以，RUN chmod +x /app命令是给/app目录添加执行权限。这通常是因为该目录包含了一些需要执行的脚本或程序。
+#CMD [ "./test" ]：这是一个CMD指令，它用于指定容器启动时默认要运行的命令。在这个例子中，当Docker容器启动时，它会运行./test命令。这里的./test是一个可执行文件的路径，这个文件应该是在之前的RUN go build -o test步骤中编译生成的。此时的./test对应着编译规则，即编译这个go文件
