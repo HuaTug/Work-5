@@ -18,8 +18,15 @@
 
 接口文档
 
-[https://a0fgr0eyrxd.feishu.cn/docx/Vz86drRYHoCNTixo62ocWxwbnHh?openbrd=1&doc_app_id=501&blockId=doxcnUukRabp79vH85sYqJiSYcb&blockType=whiteboard&blockToken=Wikbw1R1PhOytsbvggPcDOLln7g#doxcnUukRabp79vH85sYqJiSYcb ]
+[https://a0fgr0eyrxd.feishu.cn/docx/Vz86drRYHoCNTixo62ocWxwbnHh?openbrd=1&doc_app_id=501&blockId=doxcnUukRabp79vH85sYqJiSYcb&blockType=whiteboard&blockToken=Wikbw1R1PhOytsbvggPcDOLln7g#doxcnUukRabp79vH85sYqJiSYcb]
+
+项目文档
+
+[https://a0fgr0eyrxd.feishu.cn/docx/MNt9dTVXboCi6fxMEoOcw6xankd?from=from_copylink]
+
+
 `业务架构`
+
 ```
 详细见Tree.md文件
 ```
@@ -75,6 +82,12 @@
 ```
 完成了细节优化 尝试优化Sql 与Redis
 ```
+
+`4.11号`
+```
+完成了dockerfile地构建编写
+准备学习微服务
+```
 ### 需要优化的地方：
 
 `Redis的引入`
@@ -99,4 +112,5 @@
 
 
 ## 下一阶段
+
 

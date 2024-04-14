@@ -74,7 +74,7 @@ func ParseRefreshToken(aToken, rToken string) (newAToken, newRToken string,
 	if refreshClaim.ExpiresAt > time.Now().Unix() {
 		return GenerateToken(accessClaim.Uid, accessClaim.UserName)
 	}
-
+	
 	return "", "", errors.New("身份过期，请重新登陆")
 
 }
