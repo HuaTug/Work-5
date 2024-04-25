@@ -19,7 +19,7 @@ func UploadVideo(ctx context.Context, c *app.RequestContext) {
 
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusBadRequest, err.Error())
 		return
 	}
 	userId, _ := c.Get("user_id")

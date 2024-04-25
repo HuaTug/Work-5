@@ -21,8 +21,8 @@ var (
 	lockExpiry = 2 * time.Second
 	//获取锁失败重试时间间隔
 	retryDelay = 500 * time.Millisecond
-	//值过期时间
-	valueExpire  = 3600 * 24 * 30
+	//值过期时间  过期时间需要使用int整形
+	valueExpire  = int(3600 * time.Second) 
 	ErrMissCache = errors.New("miss Cache")
 	//锁设置
 	option = []redsyncs.Option{
@@ -138,6 +138,7 @@ func CacheSet(key string, data interface{}) error {
 	if err != nil {
 		return err
 	}
+
 	_, err = conn.Do("SET", key, value, "EX", valueExpire)
 
 	/*
@@ -152,6 +153,7 @@ func CacheSet(key string, data interface{}) error {
 		logrus.Info("第二步出错")
 		return err
 	}
+
 	return nil
 }
 
@@ -298,6 +300,11 @@ func CacheHSet(key, mkey string, value ...interface{}) error {
 		//对该redis缓存的解释为:key是哈希表的名字，而mkey则是哈希表的键名
 		_, err = conn.Do("HSET", key, mkey, data)
 		if err != nil {
+			return err
+		}
+		_, err = conn.Do("EXPIRE", key, valueExpire)
+		if err != nil {
+			logrus.Info(err)
 			return err
 		}
 	}

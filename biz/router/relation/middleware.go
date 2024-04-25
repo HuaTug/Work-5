@@ -3,7 +3,8 @@
 package relation
 
 import (
-	"Hertz_refactored/biz/mv"
+	"Hertz_refactored/biz/router/authfunc"
+
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -34,14 +35,10 @@ func _followservicepageMw() []app.HandlerFunc {
 
 func _relationserviceMw() []app.HandlerFunc {
 	// your code...
-	return []app.HandlerFunc{
-		mv.JwtMiddleware.MiddlewareFunc(),
-	}
+	return authfunc.Auth()
 }
 
 func _relationservicepageMw() []app.HandlerFunc {
 	// your code...
-	return []app.HandlerFunc{
-		mv.JwtMiddleware.MiddlewareFunc(),
-	}
+	return authfunc.Auth()
 }

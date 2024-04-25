@@ -32,7 +32,8 @@ func Init() {
 		panic(err)
 	}
 	logrus.Info("数据库连接成功")
-	MongoDB()
+	InitRabbitMQ()
+	//MongoDB()
 }
 func MongoDB() {
 	// 设置mongoDB客户端连接信息
@@ -47,7 +48,6 @@ func MongoDB() {
 		logrus.Info(err)
 	}
 	logrus.Info("MongoDB Connect")
-	InitRabbitMQ()
 }
 func InitRabbitMQ() {
 	conn, err := amqp.Dial("amqp://" +

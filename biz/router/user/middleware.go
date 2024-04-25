@@ -3,7 +3,8 @@
 package user
 
 import (
-	"Hertz_refactored/biz/mv"
+	"Hertz_refactored/biz/router/authfunc"
+
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -39,9 +40,7 @@ func _deleteMw() []app.HandlerFunc {
 
 func _deleteuserMw() []app.HandlerFunc {
 	// your code...
-	return []app.HandlerFunc{
-		mv.JwtMiddleware.MiddlewareFunc(),
-	}
+	return authfunc.Auth()
 }
 
 func _queryMw() []app.HandlerFunc {
@@ -51,9 +50,7 @@ func _queryMw() []app.HandlerFunc {
 
 func _queryuserMw() []app.HandlerFunc {
 	// your code...
-	return []app.HandlerFunc{
-		mv.JwtMiddleware.MiddlewareFunc(),
-	}
+	return authfunc.Auth()
 }
 
 func _updateMw() []app.HandlerFunc {
@@ -63,16 +60,12 @@ func _updateMw() []app.HandlerFunc {
 
 func _updateuserMw() []app.HandlerFunc {
 	// your code...
-	return []app.HandlerFunc{
-		mv.JwtMiddleware.MiddlewareFunc(),
-	}
+	return authfunc.Auth()
 }
 
 func _loginuserMw() []app.HandlerFunc {
 	// your code...
-	return []app.HandlerFunc{
-		mv.JwtMiddleware.LoginHandler,
-	}
+	return nil
 }
 
 func _v1userMw() []app.HandlerFunc {
@@ -82,7 +75,5 @@ func _v1userMw() []app.HandlerFunc {
 
 func _getuserinfoMw() []app.HandlerFunc {
 	// your code...
-	return []app.HandlerFunc{
-		mv.JwtMiddleware.MiddlewareFunc(),
-	}
+	return authfunc.Auth()
 }

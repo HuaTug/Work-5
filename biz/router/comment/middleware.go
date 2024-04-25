@@ -3,7 +3,8 @@
 package comment
 
 import (
-	"Hertz_refactored/biz/mv"
+	"Hertz_refactored/biz/router/authfunc"
+
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -19,23 +20,17 @@ func _v1Mw() []app.HandlerFunc {
 
 func _commentMw() []app.HandlerFunc {
 	// your code...
-	return []app.HandlerFunc{
-		mv.JwtMiddleware.MiddlewareFunc(),
-	}
+	return authfunc.Auth()
 }
 
 func _deletecommentMw() []app.HandlerFunc {
 	// your code...
-	return []app.HandlerFunc{
-		mv.JwtMiddleware.MiddlewareFunc(),
-	}
+	return authfunc.Auth()
 }
 
 func _listcommentMw() []app.HandlerFunc {
 	// your code...
-	return []app.HandlerFunc{
-		mv.JwtMiddleware.MiddlewareFunc(),
-	}
+	return authfunc.Auth()
 }
 
 func _createcommentMw() []app.HandlerFunc {

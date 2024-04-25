@@ -5,7 +5,6 @@ import (
 	"Hertz_refactored/biz/dal/cache"
 	"Hertz_refactored/biz/dal/db"
 	"Hertz_refactored/biz/dal/db/mq/script"
-	"Hertz_refactored/biz/mv"
 	"Hertz_refactored/biz/pkg/utils"
 	"bytes"
 	"net/url"
@@ -19,13 +18,32 @@ import (
 
 func hInit() *server.Hertz {
 	config.Init()
-	mv.InitJwt()
+	//mv.AccessTokenJwtInit()
 	db.Init()
 	cache.Init()
 	script.LoadingScript()
 	h := server.Default()
 	register(h)
 	return h
+}
+
+func BenchmarkCreateUser(b *testing.B) {
+	h := hInit()
+	//s := user_service.NewUserService(context.Background())
+	req := `{
+		username: "NigTusg",
+		password: "123456",
+	}
+	`
+	header := ut.Header{
+		Key:   "Content-Type",
+		Value: "application/x-www-form-urlencoded",
+	}
+	for i := 0; i < b.N; i++ {
+		ut.PerformRequest(h.Engine, "POST", "v1/user/create", &ut.Body{Body: bytes.NewBufferString(req), Len: len(req)},
+			header,
+		)
+	}
 }
 
 func TestUserRegister(t *testing.T) {
@@ -65,6 +83,29 @@ func TestUserInfo(t *testing.T) {
 
 	// 检查响应状态码是否符合预期
 	assert.DeepEqual(t, consts.StatusOK, w.Result().StatusCode())
+}
+
+func BenchmarkUpdateUser(b *testing.B) {
+	h := hInit()
+	//s := user_service.NewUserService(context.Background())
+	token := utils.Test_Token()
+	// 将 token 放置在 form 表单数据中
+	formData := url.Values{}
+	formData.Set("token", token)
+	formData.Set("name", "Nigtusg")
+	formData.Set("password", "123456")
+
+	header := ut.Header{
+		Key:   "Content-Type",
+		Value: "application/x-www-form-urlencoded",
+	}
+	for i := 0; i < b.N; i++ {
+		w := ut.PerformRequest(h.Engine, "POST", "v1/user/update", &ut.Body{Body: bytes.NewBufferString(formData.Encode()), Len: len(formData.Encode())},
+			header,
+		)
+		assert.DeepEqual(b, consts.StatusOK, w.Result().StatusCode())
+	}
+
 }
 
 func TestUpdateUser(t *testing.T) {
@@ -108,6 +149,30 @@ func TestDeleteUser(t *testing.T) {
 
 	// 检查响应状态码是否符合预期
 	assert.DeepEqual(t, consts.StatusOK, w.Result().StatusCode())
+}
+
+func BenchmarkQueryUser(b *testing.B) {
+	h := hInit()
+	b.ResetTimer()
+	//s := user_service.NewUserService(context.Background())
+	token := utils.Test_Token()
+	// 将 token 放置在 form 表单数据中
+	formData := url.Values{}
+	formData.Set("token", token)
+	formData.Set("page_size", "3")
+	formData.Set("page", "1")
+	//formData.Set("keyword", "i")
+
+	header := ut.Header{
+		Key:   "Content-Type",
+		Value: "application/x-www-form-urlencoded",
+	}
+	for i := 0; i < b.N; i++ {
+		ut.PerformRequest(h.Engine, "POST", "v1/user/query", &ut.Body{Body: bytes.NewBufferString(formData.Encode()), Len: len(formData.Encode())},
+			header,
+		)
+		//assert.DeepEqual(b, consts.StatusOK, w.Result().StatusCode())
+	}
 }
 
 func TestVideoFee(t *testing.T) {

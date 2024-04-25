@@ -22,7 +22,7 @@ func Chat(ctx context.Context, c *app.RequestContext) {
 	var req chat.MessageChatRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusBadRequest, err.Error())
 		return
 	}
 	v, _ := c.Get("user_id")

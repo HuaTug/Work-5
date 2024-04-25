@@ -1,0 +1,8 @@
+[ERROR][jwt.go:81]2024/04/20 14:58:15 form token is empty
+[ERROR][jwt.go:81]2024/04/20 15:00:25 form token is empty
+[ERROR][jwt.go:81]2024/04/20 15:08:21 signature is invalid
+[ERROR][jwt.go:81]2024/04/20 20:01:01 signature is invalid
+[ERROR][jwt.go:81]2024/04/20 23:51:55 user already exists or wrong password
+[ERROR][jwt.go:81]2024/04/20 23:52:06 user already exists or wrong password
+[ERROR][jwt.go:81]2024/04/20 23:52:43 form token is empty
+[ERROR][jwt.go:81]2024/04/20 23:52:50 signature is invalid

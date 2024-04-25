@@ -3,7 +3,8 @@
 package favorite
 
 import (
-	"Hertz_refactored/biz/mv"
+	"Hertz_refactored/biz/router/authfunc"
+
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -18,13 +19,9 @@ func _likeMw() []app.HandlerFunc {
 }
 
 func _favoriteserviceMw() []app.HandlerFunc {
-	return []app.HandlerFunc{
-		mv.JwtMiddleware.MiddlewareFunc(),
-	}
+	return authfunc.Auth()
 }
 
 func _listfavoriteMw() []app.HandlerFunc {
-	return []app.HandlerFunc{
-		mv.JwtMiddleware.MiddlewareFunc(),
-	}
+	return authfunc.Auth()
 }

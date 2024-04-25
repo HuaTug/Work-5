@@ -7,15 +7,12 @@ import (
 	"Hertz_refactored/biz/pkg/utils"
 	favorite_service "Hertz_refactored/biz/service/favorite"
 	"context"
+
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/sirupsen/logrus"
 )
 
-const (
-	add = int64(1)
-	sub = int64(-1)
-)
 
 // FavoriteService .
 // @router /like/action [POST]
@@ -24,7 +21,7 @@ func FavoriteService(ctx context.Context, c *app.RequestContext) {
 	var req favorite.FavoriteRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusBadRequest, err.Error())
 	}
 	v, _ := c.Get("user_id")
 	userId := utils.Transfer(v)
@@ -56,7 +53,7 @@ func ListFavorite(ctx context.Context, c *app.RequestContext) {
 	var req favorite.ListFavoriteRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusBadRequest, err.Error())
 		return
 	}
 	v, _ := c.Get("user_id")
@@ -74,5 +71,4 @@ func ListFavorite(ctx context.Context, c *app.RequestContext) {
 	resp.Code = consts.StatusOK
 	resp.Msg = "成功展示列表"
 	c.JSON(consts.StatusOK, fav)
-	return
 }

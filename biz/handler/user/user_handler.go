@@ -4,11 +4,13 @@ package user
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 
 	user "Hertz_refactored/biz/model/user"
+	jwt "Hertz_refactored/biz/mv"
 	"Hertz_refactored/biz/pack"
 	"Hertz_refactored/biz/pkg/logging"
 	"Hertz_refactored/biz/pkg/utils"
@@ -22,7 +24,7 @@ func UpdateUser(ctx context.Context, c *app.RequestContext) {
 	var req user.UpdateUserRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusBadRequest, err.Error())
 		return
 	}
 	v, _ := c.Get("user_id")
@@ -46,6 +48,10 @@ func DeleteUser(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.DeleteUserRequest
 	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.JSON(consts.StatusBadRequest, err.Error())
+		return
+	}
 	v, _ := c.Get("user_id")
 	userId := utils.Transfer(v)
 	resp := new(user.DeleteUserResponse)
@@ -67,7 +73,7 @@ func QueryUser(ctx context.Context, c *app.RequestContext) {
 	var req user.QueryUserRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusBadRequest, err.Error())
 		return
 	}
 	var User []*user.User
@@ -86,7 +92,7 @@ func CreateUser(ctx context.Context, c *app.RequestContext) {
 	var req user.CreateUserRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusBadRequest, err.Error())
 		return
 	}
 	resp := new(user.CreateUserResponse)
@@ -98,6 +104,7 @@ func CreateUser(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 	c.JSON(consts.StatusOK, user.CreateUserResponse{Code: consts.StatusOK, Msg: "创建用户成功", User: userResp})
+
 }
 
 // LoginUser .
@@ -109,9 +116,22 @@ func LoginUser(ctx context.Context, c *app.RequestContext) {
 	if err != nil {
 		logging.Info(err)
 		c.JSON(consts.StatusBadRequest, "登录失败")
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusBadRequest, err.Error())
 		return
 	}
+
+	//完成了双Token的生成
+	jwt.AccessTokenJwtMiddleware.LoginHandler(ctx, c)
+	jwt.RefreshTokenJwtMiddleware.LoginHandler(ctx, c)
+	
+	AccessToken := c.GetString("Access-Token")
+	RefreshToken := c.GetString("Refresh-Token")
+	resp := new(user.LoginUserResponse)
+	resp.Code = consts.StatusOK
+	resp.Msg = "Login Success"
+	resp.Token = AccessToken
+	resp.RefreshToken = RefreshToken
+	c.JSON(consts.StatusOK, resp)
 }
 
 // GetUserInfo .
@@ -121,11 +141,16 @@ func GetUserInfo(ctx context.Context, c *app.RequestContext) {
 	var req user.GetUserInfoRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusBadRequest, err.Error())
 		logging.Error(err)
 		return
 	}
-	v, _ := c.Get("user_id")
+	v, exists := c.Get("user_id")
+	fmt.Println(v)
+	if !exists {
+		c.JSON(consts.StatusBadRequest, "Fail To Get Token")
+		return
+	}
 	userId := utils.Transfer(v)
 	//go CacheIdAndName(utils.Transfer(userId), req.UserName)
 	/*
