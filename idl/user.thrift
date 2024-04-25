@@ -68,6 +68,7 @@ struct LoginUserResponse{
     1:Code code
     2:string msg
     3:string token
+    4:string RefreshToken
 }
 
 struct GetUserInfoRequest{

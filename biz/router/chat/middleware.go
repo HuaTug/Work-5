@@ -3,7 +3,6 @@
 package chat
 
 import (
-	"Hertz_refactored/biz/mv"
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -23,6 +22,6 @@ func _chatMw() []app.HandlerFunc {
 func _chatsMw() []app.HandlerFunc {
 	// your code...
 	return []app.HandlerFunc{
-		mv.JwtMiddleware.MiddlewareFunc(),
+		//mv.AccessTokenJwtMiddleware.MiddlewareFunc(),
 	}
 }

@@ -3,7 +3,8 @@
 package publish
 
 import (
-	"Hertz_refactored/biz/mv"
+	"Hertz_refactored/biz/router/authfunc"
+
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -23,7 +24,5 @@ func _videoMw() []app.HandlerFunc {
 }
 
 func _uploadvideoMw() []app.HandlerFunc {
-	return []app.HandlerFunc{
-		mv.JwtMiddleware.MiddlewareFunc(),
-	}
+	return authfunc.Auth()
 }

@@ -3,25 +3,47 @@
 package main
 
 import (
-	"github.com/cloudwego/hertz/pkg/app/server"
-
 	"Hertz_refactored/biz/config"
 	"Hertz_refactored/biz/dal/cache"
 	"Hertz_refactored/biz/dal/db"
 	"Hertz_refactored/biz/dal/db/mq/script"
-	"Hertz_refactored/biz/mv"
+	jwt "Hertz_refactored/biz/mv"
+	es "Hertz_refactored/biz/mv/Es"
 	chats "Hertz_refactored/biz/service/chats/im"
+	"context"
+
+	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/app/server"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"github.com/cloudwego/hertz/pkg/common/utils"
+	"github.com/hertz-contrib/opensergo/sentinel/adapter"
 )
 
 func main() {
 	config.Init()
-	mv.InitJwt()
+	jwt.AccessTokenJwtInit()
+	jwt.RefreshTokenJwtInit()
 	db.Init()
 	cache.Init()
+	es.Init()
+	hlog.Info("Inialize Success")
 	script.LoadingScript()
 	h := server.Default(
 		server.WithStreamBody(true),
 		server.WithMaxRequestBodySize(16*1024*1024))
+	h.Use(adapter.SentinelServerMiddleware(
+		adapter.WithServerResourceExtractor(func(ctx context.Context, rc *app.RequestContext) string {
+			return "Default"
+		}),
+
+		adapter.WithServerBlockFallback(func(ctx context.Context, rc *app.RequestContext) {
+			rc.AbortWithStatusJSON(400, utils.H{
+				"err":  "too many request",
+				"code": 10001,
+			})
+		}),
+	))
+	//h.GET("/server_test",func(c context.Context, ctx *app.RequestContext) {})
 	h.NoHijackConnPool = true
 	go chats.Manager.Listen()
 	register(h)

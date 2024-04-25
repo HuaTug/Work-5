@@ -29,7 +29,7 @@ func UpdateUser(user *user.User, uid int64) error {
 }
 
 func QueryUser(keyword *string, page, pageSize int64) ([]*user.User, int64, error) {
-	db := Db.Model(user.User{})
+	db := Db.Model(user.User{}).WithContext(context.Background())
 	if keyword != nil && len(*keyword) != 0 {
 		db = db.Where("user_name like ?", "%"+*keyword+"%")
 	}
@@ -72,7 +72,7 @@ func CheckUser(account, password string) (user.User, error, bool) {
 		logrus.Info("正在创建新用户")
 		return users, nil, true
 	}
-	if flag := util.VerifyPassword(password, users.Password); flag == false {
+	if flag := util.VerifyPassword(password, users.Password); !flag{
 		return users, errors.New("密码错误"), true
 	}
 	return users, nil, false

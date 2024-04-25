@@ -4,11 +4,13 @@ import (
 	"context"
 	"strconv"
 
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/sirupsen/logrus"
 
 	"Hertz_refactored/biz/dal/cache"
 	"Hertz_refactored/biz/dal/db"
 	"Hertz_refactored/biz/model/video"
+	es "Hertz_refactored/biz/mv/Es"
 	"Hertz_refactored/biz/pkg/logging"
 )
 
@@ -59,6 +61,24 @@ func (s *VideoService) VideoList(req video.VideoFeedListRequest) ([]*video.Video
 	if videos, count, err = db.Videolist(req); err != nil {
 		return videos, count, err
 	}
+	temp := es.VideoIndex{Index: "videos"}
+	for _, v := range videos {
+		err = temp.CreateVideoDoc(es.Video{
+			AuthorId: v.AuthorId,
+			VideoId:  v.VideoId,
+			Info: es.VideoOtherData{
+				PlayUrl:       v.PlayUrl,
+				CoverUrl:      v.CoverUrl,
+				FavoriteCount: v.FavoriteCount,
+				CommentCount:  v.CommentCount,
+				//PublishTime:   v.PublishTime,
+				Title: v.Title,
+			},
+		})
+		if err != nil {
+			hlog.Info("Create Info Err: ", err)
+		}
+	}
 	return videos, count, err
 }
 
@@ -66,6 +86,8 @@ func (s *VideoService) VideoSearch(req video.VideoSearchRequest) ([]*video.Video
 	var video []*video.Video
 	var count int64
 	var err error
+	//NewVideoService(context.Background()).SpecialSearch()
+	NewVideoService(context.Background()).KeywordSearch(req.Keyword)
 	if video, count, err = db.Videosearch(req); err != nil {
 		logging.Error(err)
 		return video, count, err
@@ -73,6 +95,38 @@ func (s *VideoService) VideoSearch(req video.VideoSearchRequest) ([]*video.Video
 	return video, count, err
 }
 
+// 使用es进行测试单条数据查询  (根据唯一标识符查找)
+func (s *VideoService) SpecialSearch() *es.Video {
+	var video *es.Video
+	var err error
+	temp := es.VideoIndex{Index: "videos"}
+	video, err = temp.SearchVideoDoc(2)
+	if err != nil {
+		logrus.Info(err)
+		return nil
+	}
+	hlog.Info(video.Info.Title)
+	return video
+
+}
+
+func (s *VideoService) KeywordSearch(keywords string) []*es.Video {
+	var videos []*es.Video
+	var err error
+	var cnt int64
+	temp := es.VideoIndex{Index: "videos"}
+	videos, cnt, err = temp.SearchVideoDocDefault(keywords)
+	if err != nil {
+		hlog.Info(err)
+	}
+	if len(videos) >= 1 {
+		for i, _ := range videos {
+			hlog.Info(videos[i].Info.Title)
+		}
+	}
+	hlog.Info(cnt)
+	return videos
+}
 func (s *VideoService) VideoPopular() (videos []*video.Video, err error) {
 	//resp := new(video.VideoPopularResponse)
 	//ToDo :排行的显示功能有问题 可以在redis内直接查看

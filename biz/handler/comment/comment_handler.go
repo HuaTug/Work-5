@@ -20,6 +20,10 @@ func CreateComment(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req comment.CreateCommentRequest
 	err = c.BindAndValidate(&req)
+	if err!=nil{
+		c.JSON(consts.StatusBadRequest,err.Error())
+		return
+	}
 	v, _ := c.Get("user_id")
 	userId := utils.Transfer(v)
 	s := comment_service.NewCommentService(ctx)
@@ -45,7 +49,7 @@ func ListComment(ctx context.Context, c *app.RequestContext) {
 	var req comment.ListCommentRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusBadRequest, err.Error())
 		return
 	}
 	s := comment_service.NewCommentService(ctx)
@@ -70,7 +74,7 @@ func DeleteComment(ctx context.Context, c *app.RequestContext) {
 	var req comment.CommentDeleteRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusBadRequest, err.Error())
 		return
 	}
 	resp := new(comment.CommentDeleteResponse)

@@ -80,6 +80,6 @@ func ParseRefreshToken(aToken, rToken string) (newAToken, newRToken string,
 }
 
 func Test_Token() string {
-	Token := `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTQyMzUzNTAsIm9yaWdfaWF0IjoxNzExNjQzMzUwLCJ1c2VyX2lkIjoxfQ.XrBNo1vlHduekRoWHJplMCoZVm2K5Jldd2EwpzW9qqQ`
+	Token := `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTYxODg5MDcsIm9yaWdfaWF0IjoxNzEzNTk2OTA3LCJ1c2VyX2lkIjozfQ.V5i7IljD4HLlNi5zq76zZqfSvE77YuKHSKHypARwI_o`
 	return Token
 }

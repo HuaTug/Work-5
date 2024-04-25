@@ -1,0 +1,5 @@
+[ERROR][jwt.go:77]2024/04/24 09:10:17 invalid parameter: Password
+[ERROR][jwt.go:47]2024/04/24 09:46:24 密码错误
+[ERROR][jwt.go:77]2024/04/24 09:46:24 密码错误
+[INFO][comment.go:54]2024/04/24 09:49:05 新插入一条评论成功
+[ERROR][comment.go:17]2024/04/24 09:49:05 sql: Scan error on column index 0, name "MAX(comment_id)": converting NULL to int64 is unsupported
